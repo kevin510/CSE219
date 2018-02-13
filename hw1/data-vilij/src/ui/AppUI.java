@@ -1,9 +1,11 @@
 package ui;
 
 import actions.AppActions;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
@@ -64,10 +66,24 @@ public final class AppUI extends UITemplate {
     }
 
     private void layout() {
-        // TODO for homework 1
+        FlowPane mainPane = new FlowPane();
+        appPane.getChildren().add(mainPane);
+        textArea = new TextArea();
+        displayButton = new Button();
+        displayButton.setText("Display");
+        scrnshotButton = new Button();
+        scrnshotButton.setText("Screenshot");
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis(); 
+        chart = new ScatterChart<Number, Number>(xAxis, yAxis);
+        mainPane.getChildren().add(textArea);
+        mainPane.getChildren().add(displayButton);
+        mainPane.getChildren().add(scrnshotButton);
+        mainPane.getChildren().add(chart);
+        
     }
 
     private void setWorkspaceActions() {
-        // TODO for homework 1
+        
     }
 }
