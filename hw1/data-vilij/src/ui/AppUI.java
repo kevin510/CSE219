@@ -1,6 +1,11 @@
 package ui;
 
+import dataprocessors.TSDProcessor;
 import actions.AppActions;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
@@ -21,6 +26,7 @@ public final class AppUI extends UITemplate {
     ApplicationTemplate applicationTemplate;
 
     @SuppressWarnings("FieldCanBeLocal")
+    private TSDProcessor tsdp;
     private Button                       scrnshotButton; // toolbar button to take a screenshot of the data
     private ScatterChart<Number, Number> chart;          // the chart where data will be displayed
     private Button                       displayButton;  // workspace button to display data on the chart
@@ -75,7 +81,7 @@ public final class AppUI extends UITemplate {
         scrnshotButton.setText("Screenshot");
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
-        chart = new ScatterChart<Number, Number>(xAxis, yAxis);
+        chart = new ScatterChart(xAxis, yAxis);
         mainPane.getChildren().add(textArea);
         mainPane.getChildren().add(displayButton);
         mainPane.getChildren().add(scrnshotButton);
@@ -84,6 +90,23 @@ public final class AppUI extends UITemplate {
     }
 
     private void setWorkspaceActions() {
-        
+        TSDProcessor tsdp = new TSDProcessor();
+        hasNewText = false;
+        textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {           
+            System.out.println("change");
+        });
+        displayButton.setOnAction((ActionEvent e) -> {
+            if(!textArea.getText().equals("")) {
+                hasNewText = true;
+                String plot = textArea.getText();
+                try {                   
+                    tsdp.processString(plot);
+                    tsdp.toChartData(getChart());
+                } catch (Exception ex) {
+                    Logger.getLogger(AppUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            System.out.println("clicked");
+        });
     }
 }
