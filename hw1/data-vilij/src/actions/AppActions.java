@@ -25,7 +25,8 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleNewRequest() {
-        // TODO for homework 1
+        applicationTemplate.getDataComponent().clear();
+        applicationTemplate.getUIComponent().clear();
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleExitRequest() {
-        // TODO for homework 1
+        System.exit(0);
     }
 
     @Override

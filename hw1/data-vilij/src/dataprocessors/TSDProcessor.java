@@ -42,7 +42,7 @@ public final class TSDProcessor {
      * @param tsdString the input data provided as a single {@link String}
      * @throws Exception if the input string does not follow the <code>.tsd</code> data format
      */
-    public void processString(String tsdString) throws Exception {
+    void processString(String tsdString) throws Exception {
         AtomicBoolean hadAnError   = new AtomicBoolean(false);
         StringBuilder errorMessage = new StringBuilder();
         Stream.of(tsdString.split("\n"))

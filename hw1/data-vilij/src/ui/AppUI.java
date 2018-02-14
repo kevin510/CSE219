@@ -1,9 +1,7 @@
 package ui;
 
-import dataprocessors.TSDProcessor;
 import actions.AppActions;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import dataprocessors.AppData;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.chart.NumberAxis;
@@ -26,13 +24,12 @@ public final class AppUI extends UITemplate {
     ApplicationTemplate applicationTemplate;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private TSDProcessor tsdp;
     private Button                       scrnshotButton; // toolbar button to take a screenshot of the data
     private ScatterChart<Number, Number> chart;          // the chart where data will be displayed
     private Button                       displayButton;  // workspace button to display data on the chart
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
-
+    
     public ScatterChart<Number, Number> getChart() { return chart; }
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
@@ -68,17 +65,15 @@ public final class AppUI extends UITemplate {
 
     @Override
     public void clear() {
-        // TODO for homework 1
+        textArea.clear();
     }
 
     private void layout() {
         FlowPane mainPane = new FlowPane();
         appPane.getChildren().add(mainPane);
         textArea = new TextArea();
-        displayButton = new Button();
-        displayButton.setText("Display");
-        scrnshotButton = new Button();
-        scrnshotButton.setText("Screenshot");
+        displayButton = new Button("Display");
+        scrnshotButton = new Button("Screenshot");
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new ScatterChart(xAxis, yAxis);
@@ -90,21 +85,20 @@ public final class AppUI extends UITemplate {
     }
 
     private void setWorkspaceActions() {
-        TSDProcessor tsdp = new TSDProcessor();
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {           
-            System.out.println("change");
+            newButton.setDisable(false);
         });
+        
         displayButton.setOnAction((ActionEvent e) -> {
+            if(hasNewText) {
+                //confirmation 
+            }
             if(!textArea.getText().equals("")) {
                 hasNewText = true;
-                String plot = textArea.getText();
-                try {                   
-                    tsdp.processString(plot);
-                    tsdp.toChartData(getChart());
-                } catch (Exception ex) {
-                    Logger.getLogger(AppUI.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                String plot = textArea.getText();                           
+                AppData dat = (AppData) applicationTemplate.getDataComponent();
+                dat.loadData(plot);               
             }
             System.out.println("clicked");
         });
