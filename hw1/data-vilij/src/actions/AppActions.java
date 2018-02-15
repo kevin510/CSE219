@@ -25,7 +25,6 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleNewRequest() {
-        applicationTemplate.getDataComponent().clear();
         applicationTemplate.getUIComponent().clear();
     }
 

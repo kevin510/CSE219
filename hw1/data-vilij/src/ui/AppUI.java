@@ -66,6 +66,8 @@ public final class AppUI extends UITemplate {
     @Override
     public void clear() {
         textArea.clear();
+        applicationTemplate.getDataComponent().clear();
+        chart.getData().remove(0, (int) (chart.getData().size()));
     }
 
     private void layout() {
@@ -73,13 +75,13 @@ public final class AppUI extends UITemplate {
         appPane.getChildren().add(mainPane);
         textArea = new TextArea();
         displayButton = new Button("Display");
-        scrnshotButton = new Button("Screenshot");
+        //scrnshotButton = new Button("Screenshot");
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new ScatterChart(xAxis, yAxis);
         mainPane.getChildren().add(textArea);
         mainPane.getChildren().add(displayButton);
-        mainPane.getChildren().add(scrnshotButton);
+        //mainPane.getChildren().add(scrnshotButton);
         mainPane.getChildren().add(chart);
         
     }
@@ -88,6 +90,7 @@ public final class AppUI extends UITemplate {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {           
             newButton.setDisable(false);
+            saveButton.setDisable(false);
         });
         
         displayButton.setOnAction((ActionEvent e) -> {
