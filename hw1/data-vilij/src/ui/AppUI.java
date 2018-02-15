@@ -67,41 +67,50 @@ public final class AppUI extends UITemplate {
     public void clear() {
         textArea.clear();
         applicationTemplate.getDataComponent().clear();
+        clearChart();
+    }
+    
+    private void clearChart() {
         chart.getData().remove(0, (int) (chart.getData().size()));
     }
 
     private void layout() {
         FlowPane mainPane = new FlowPane();
         appPane.getChildren().add(mainPane);
+        scrnshotButton = new Button("Screenshot");
         textArea = new TextArea();
         displayButton = new Button("Display");
-        //scrnshotButton = new Button("Screenshot");
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new ScatterChart(xAxis, yAxis);
         mainPane.getChildren().add(textArea);
         mainPane.getChildren().add(displayButton);
-        //mainPane.getChildren().add(scrnshotButton);
         mainPane.getChildren().add(chart);
         
     }
 
     private void setWorkspaceActions() {
         hasNewText = false;
-        textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {           
-            newButton.setDisable(false);
-            saveButton.setDisable(false);
+        textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
+            if(!textArea.getText().equals("")) {
+                hasNewText = true;
+                newButton.setDisable(false);
+                saveButton.setDisable(false);
+            } else {
+                hasNewText = false;
+                newButton.setDisable(true);
+                saveButton.setDisable(true);
+            }
+            
         });
         
         displayButton.setOnAction((ActionEvent e) -> {
-            if(hasNewText) {
-                //confirmation 
-            }
-            if(!textArea.getText().equals("")) {
-                hasNewText = true;
+            if(hasNewText == true) {
+                clearChart();
                 String plot = textArea.getText();                           
                 AppData dat = (AppData) applicationTemplate.getDataComponent();
-                dat.loadData(plot);               
+                dat.loadData(plot);
+                hasNewText = false;
             }
             System.out.println("clicked");
         });
