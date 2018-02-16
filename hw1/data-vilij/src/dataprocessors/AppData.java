@@ -6,7 +6,6 @@ import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
 import static vilij.components.Dialog.DialogType.ERROR;
-import vilij.components.ErrorDialog;
 
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
