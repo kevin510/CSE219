@@ -1,4 +1,4 @@
-package vilij.components;
+ package vilij.components;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

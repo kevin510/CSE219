@@ -77,7 +77,6 @@ public final class AppUI extends UITemplate {
     private void layout() {
         FlowPane mainPane = new FlowPane();
         appPane.getChildren().add(mainPane);
-        scrnshotButton = new Button("Screenshot");
         textArea = new TextArea();
         displayButton = new Button("Display");
         NumberAxis xAxis = new NumberAxis();
@@ -112,7 +111,6 @@ public final class AppUI extends UITemplate {
                 dat.loadData(plot);
                 hasNewText = false;
             }
-            System.out.println("clicked");
         });
     }
 }

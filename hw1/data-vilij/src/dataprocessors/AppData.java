@@ -5,8 +5,8 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static vilij.components.Dialog.DialogType.ERROR;
+import vilij.components.ErrorDialog;
 
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
@@ -34,7 +34,8 @@ public class AppData implements DataComponent {
             processor.processString(dataString);
             displayData();
         } catch (Exception ex) {
-            Logger.getLogger(AppData.class.getName()).log(Level.SEVERE, null, ex);
+            applicationTemplate.getDialog(ERROR).show(ex.getLocalizedMessage(), ex.getMessage());
+            //err.show(ex.getLocalizedMessage(), ex.getMessage());
         }
     }
 
