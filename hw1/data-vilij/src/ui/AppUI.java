@@ -2,6 +2,7 @@ package ui;
 
 import actions.AppActions;
 import dataprocessors.AppData;
+import static java.io.File.separator;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.chart.NumberAxis;
@@ -10,6 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import static settings.AppPropertyTypes.SCREENSHOT_ICON;
+import static settings.AppPropertyTypes.SCREENSHOT_TOOLTIP;
+import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
+import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
@@ -29,6 +34,7 @@ public final class AppUI extends UITemplate {
     private Button                       displayButton;  // workspace button to display data on the chart
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
+    private String scrnshotIconPath;
     
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -40,11 +46,17 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setResourcePaths(ApplicationTemplate applicationTemplate) {
         super.setResourcePaths(applicationTemplate);
+        String iconsPath = "/" + String.join(separator,
+                                             applicationTemplate.manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                                             applicationTemplate.manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
+        scrnshotIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name()));
     }
 
     @Override
     protected void setToolBar(ApplicationTemplate applicationTemplate) {
         super.setToolBar(applicationTemplate);
+        scrnshotButton = setToolbarButton(scrnshotIconPath, applicationTemplate.manager.getPropertyValue(SCREENSHOT_TOOLTIP.name()), true);
+        toolBar.getItems().add(scrnshotButton);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import static vilij.components.Dialog.DialogType.CONFIRMATION;
+import static vilij.components.Dialog.DialogType.ERROR;
 
 /**
  * This is the concrete implementation of the action handlers required by the application.
@@ -31,16 +32,24 @@ public final class AppActions implements ActionComponent {
         ConfirmationDialog cd = (ConfirmationDialog) applicationTemplate.getDialog(CONFIRMATION);
         cd.show("Warning: Unsaved Data","Would you like to save your data before it is deleted?");
         Option o = cd.getSelectedOption();
-        switch(o) {
-            case YES:
-                handleSaveRequest();
-                applicationTemplate.getUIComponent().clear();
-                break;
-            case NO:
-                applicationTemplate.getUIComponent().clear();
-                break;
-            case CANCEL:
-                break;
+        if(o != null) {
+            switch(o) {
+                case YES:
+                    try {
+                        promptToSave();
+                    } catch (IOException ex) {
+                        applicationTemplate.getDialog(ERROR).show(ex.getLocalizedMessage(), ex.getMessage());
+                    }
+                    applicationTemplate.getUIComponent().clear();
+                    break;
+                case NO:
+                    applicationTemplate.getUIComponent().clear();
+                    break;
+                case CANCEL:
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
