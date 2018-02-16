@@ -1,23 +1,18 @@
 package actions;
 
 import java.io.File;
-import static java.io.File.separator;
 import java.io.FileWriter;
 import vilij.components.ActionComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import static vilij.components.Dialog.DialogType.CONFIRMATION;
 import static vilij.components.Dialog.DialogType.ERROR;
 import javafx.stage.FileChooser;
 import static settings.AppPropertyTypes.DATA_FILE_EXT;
-import static settings.AppPropertyTypes.DATA_RESOURCE_PATH;
-import static settings.AppPropertyTypes.DATA_VILIJ_RESOURCE_PATH;
-import static settings.AppPropertyTypes.RESOURCE_PATH;
 import static settings.AppPropertyTypes.SAVE_UNSAVED_WORK_TITLE;
 
 /**
@@ -103,17 +98,8 @@ public final class AppActions implements ActionComponent {
         FileChooser fc = new FileChooser();
         fc.setTitle(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()));
         fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
-        /*String initDirStr = "/" + String.join(separator,
-                //Paths.get(".").toAbsolutePath().normalize().toString(),
-                applicationTemplate.manager.getPropertyValue(DATA_VILIJ_RESOURCE_PATH.name()),
-                applicationTemplate.manager.getPropertyValue(RESOURCE_PATH.name()),
-                applicationTemplate.manager.getPropertyValue(DATA_RESOURCE_PATH.name())) + "/";
-        File f = new File(initDirStr);
-        fc.setInitialDirectory(f);*/
         File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-        FileWriter fw = new FileWriter(toSave);
-        //fw.write(applicationTemplate.getUIComponent().getTextArea().getText());
-        
+        FileWriter fw = new FileWriter(toSave);        
         return false;
     }
 }
