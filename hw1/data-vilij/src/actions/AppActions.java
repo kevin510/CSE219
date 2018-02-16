@@ -1,14 +1,24 @@
 package actions;
 
+import java.io.File;
+import static java.io.File.separator;
+import java.io.FileWriter;
 import vilij.components.ActionComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import vilij.components.ConfirmationDialog;
 import vilij.components.ConfirmationDialog.Option;
 import static vilij.components.Dialog.DialogType.CONFIRMATION;
 import static vilij.components.Dialog.DialogType.ERROR;
+import javafx.stage.FileChooser;
+import static settings.AppPropertyTypes.DATA_FILE_EXT;
+import static settings.AppPropertyTypes.DATA_RESOURCE_PATH;
+import static settings.AppPropertyTypes.DATA_VILIJ_RESOURCE_PATH;
+import static settings.AppPropertyTypes.RESOURCE_PATH;
+import static settings.AppPropertyTypes.SAVE_UNSAVED_WORK_TITLE;
 
 /**
  * This is the concrete implementation of the action handlers required by the application.
@@ -90,8 +100,20 @@ public final class AppActions implements ActionComponent {
      * @return <code>false</code> if the user presses the <i>cancel</i>, and <code>true</code> otherwise.
      */
     private boolean promptToSave() throws IOException {
-        // TODO for homework 1
-        // TODO remove the placeholder line below after you have implemented this method
+        FileChooser fc = new FileChooser();
+        fc.setTitle(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()));
+        fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
+        /*String initDirStr = "/" + String.join(separator,
+                //Paths.get(".").toAbsolutePath().normalize().toString(),
+                applicationTemplate.manager.getPropertyValue(DATA_VILIJ_RESOURCE_PATH.name()),
+                applicationTemplate.manager.getPropertyValue(RESOURCE_PATH.name()),
+                applicationTemplate.manager.getPropertyValue(DATA_RESOURCE_PATH.name())) + "/";
+        File f = new File(initDirStr);
+        fc.setInitialDirectory(f);*/
+        File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+        FileWriter fw = new FileWriter(toSave);
+        //fw.write(applicationTemplate.getUIComponent().getTextArea().getText());
+        
         return false;
     }
 }

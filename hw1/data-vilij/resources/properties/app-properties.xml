@@ -6,6 +6,12 @@ functionality within the main workspace. -->
     <property_list>
         <!-- RESOURCE FILES AND FOLDERS -->
         <property name="DATA_RESOURCE_PATH" value="data"/>
+        
+        <!-- DATA-VILIJ DIRECTORY PATH -->
+        <property name="DATA_VILIJ_RESOURCE_PATH" value="data-vilij"/>
+        
+        <!-- RESOURCE DIRECTORY PATH -->
+        <property name="RESOURCE_PATH" value="resource"/>
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>

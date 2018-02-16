@@ -99,7 +99,7 @@ public final class AppUI extends UITemplate {
         mainPane.getChildren().add(chart);
         
     }
-
+    
     private void setWorkspaceActions() {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
