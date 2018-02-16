@@ -35,7 +35,6 @@ public class AppData implements DataComponent {
             displayData();
         } catch (Exception ex) {
             applicationTemplate.getDialog(ERROR).show(ex.getLocalizedMessage(), ex.getMessage());
-            //err.show(ex.getLocalizedMessage(), ex.getMessage());
         }
     }
 

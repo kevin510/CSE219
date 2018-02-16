@@ -5,6 +5,9 @@ import vilij.templates.ApplicationTemplate;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import vilij.components.ConfirmationDialog;
+import vilij.components.ConfirmationDialog.Option;
+import static vilij.components.Dialog.DialogType.CONFIRMATION;
 
 /**
  * This is the concrete implementation of the action handlers required by the application.
@@ -25,7 +28,20 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleNewRequest() {
-        applicationTemplate.getUIComponent().clear();
+        ConfirmationDialog cd = (ConfirmationDialog) applicationTemplate.getDialog(CONFIRMATION);
+        cd.show("Warning: Unsaved Data","Would you like to save your data before it is deleted?");
+        Option o = cd.getSelectedOption();
+        switch(o) {
+            case YES:
+                handleSaveRequest();
+                applicationTemplate.getUIComponent().clear();
+                break;
+            case NO:
+                applicationTemplate.getUIComponent().clear();
+                break;
+            case CANCEL:
+                break;
+        }
     }
 
     @Override
