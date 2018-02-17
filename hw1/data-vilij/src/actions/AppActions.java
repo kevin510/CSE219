@@ -13,6 +13,7 @@ import static vilij.components.Dialog.DialogType.CONFIRMATION;
 import static vilij.components.Dialog.DialogType.ERROR;
 import javafx.stage.FileChooser;
 import static settings.AppPropertyTypes.DATA_FILE_EXT;
+import static settings.AppPropertyTypes.SAVE_UNSAVED_WORK;
 import static settings.AppPropertyTypes.SAVE_UNSAVED_WORK_TITLE;
 
 /**
@@ -35,7 +36,7 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleNewRequest() {
         ConfirmationDialog cd = (ConfirmationDialog) applicationTemplate.getDialog(CONFIRMATION);
-        cd.show("Warning: Unsaved Data","Would you like to save your data before it is deleted?");
+        cd.show(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()), applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK.name()));
         Option o = cd.getSelectedOption();
         if(o != null) {
             switch(o) {
@@ -98,8 +99,13 @@ public final class AppActions implements ActionComponent {
         FileChooser fc = new FileChooser();
         fc.setTitle(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()));
         fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
-        File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-        FileWriter fw = new FileWriter(toSave);        
+        try {
+           File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+           FileWriter fw = new FileWriter(toSave); 
+        } catch (Exception e) {
+            applicationTemplate.getDialog(ERROR).show(e.getLocalizedMessage(), e.getMessage());
+        }
+                
         return false;
     }
 }
