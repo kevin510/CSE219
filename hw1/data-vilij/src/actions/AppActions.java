@@ -96,14 +96,17 @@ public final class AppActions implements ActionComponent {
      * @return <code>false</code> if the user presses the <i>cancel</i>, and <code>true</code> otherwise.
      */
     private boolean promptToSave() throws IOException {
-        FileChooser fc = new FileChooser();
-        fc.setTitle(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()));
-        fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
+        
         try {
-           File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
-           FileWriter fw = new FileWriter(toSave); 
-        } catch (Exception e) {
+            FileChooser fc = new FileChooser();
+            fc.setTitle(applicationTemplate.manager.getPropertyValue(SAVE_UNSAVED_WORK_TITLE.name()));
+            fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
+            File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+            FileWriter fw = new FileWriter(toSave); 
+        } catch (IOException e) {
             applicationTemplate.getDialog(ERROR).show(e.getLocalizedMessage(), e.getMessage());
+        } catch (NullPointerException e) {
+            
         }
                 
         return false;
