@@ -103,10 +103,8 @@ public final class AppActions implements ActionComponent {
             fc.setInitialFileName(applicationTemplate.manager.getPropertyValue(DATA_FILE_EXT.name()));
             File toSave = fc.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
             FileWriter fw = new FileWriter(toSave); 
-        } catch (IOException e) {
-            applicationTemplate.getDialog(ERROR).show(e.getLocalizedMessage(), e.getMessage());
         } catch (NullPointerException e) {
-            
+            // Do Nothing
         }
                 
         return false;
