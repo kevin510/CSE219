@@ -1,5 +1,6 @@
 package redboxman_javafx;
 
+import java.awt.Color;
 import java.io.InputStream;
 import java.util.ArrayList;
 import javafx.application.Application;
@@ -106,7 +107,28 @@ public class RedBoxManRenderer extends Application {
     }
     
     public void renderImageRedBoxMan(Point2D location) {
-	gc.drawImage(redBoxManImage, location.getX(), location.getY());
+	//gc.drawImage(redBoxManImage, location.getX(), location.getY());
+        String eyes = "#FFFF00";
+        String outlineColor = "#000000";
+        renderShapeRedBoxMan(location);
+        gc.setFill(Paint.valueOf(eyes));
+        gc.fillRect(location.getX()+20, location.getY()+15, 25, 25);
+        gc.fillRect(location.getX()+60, location.getY()+15, 25, 25);
+        gc.setFill(Paint.valueOf(outlineColor));
+        gc.rect(location.getX()+20, location.getY()+15, 25, 25);
+        gc.rect(location.getX()+60, location.getY()+15, 25, 25);
+        gc.fillRect(location.getX()+25, location.getY()+25, 10, 10);
+        gc.fillRect(location.getX()+65, location.getY()+25, 10, 10);
+        gc.fillRect(location.getX()+15, location.getY()+70, 75, 10);
+        int bodyX = (int) (location.getX() + 20);
+        int bodyY = (int) (location.getY()+88);
+        gc.fillRect(bodyX, bodyY, 80, 20);
+        gc.fillRect(bodyX + 10, bodyY, 60, 40);
+        gc.fillRect(bodyX, bodyY +40, 10, 10);
+        gc.fillRect(bodyX + 70, bodyY +40, 10, 10);
+        
+       
+        gc.stroke();
     }
 
     /**

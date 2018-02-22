@@ -91,6 +91,7 @@ function renderShapesRedBoxMan(location) {
     var headW = 115;
     var headH = 88;
     
+    
     // DRAW HIS RED HEAD
     gc.fillStyle = headColor;
     gc.fillRect(location.x, location.y, headW, headH);
@@ -99,9 +100,21 @@ function renderShapesRedBoxMan(location) {
     gc.lineWidth = 1;
     gc.rect(location.x, location.y, headW, headH);
     gc.stroke();
+    var eyes = "#FFFF00";
     
+    
+    gc.fillStyle = eyes;
+    //gc.stroke();
+    gc.fillRect(location.x + 20, location.y + 15, 25, 25);
+    gc.fillRect(location.x + 60, location.y + 15, 25, 25);
+    gc.beginPath();
+    gc.rect(location.x + 20, location.y + 15, 25, 25);
+    gc.rect(location.x + 60, location.y + 15, 25, 25);
+    gc.stroke();
+
     // AND THEN DRAW THE REST OF HIM
 }
+
 
 function renderImageRedBoxMan(location) {
     gc.drawImage(redBoxManImage, location.x, location.y);
