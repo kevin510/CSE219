@@ -11,8 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.SCREENSHOT_ICON;
 import static settings.AppPropertyTypes.SCREENSHOT_TOOLTIP;
+import vilij.propertymanager.PropertyManager;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import vilij.templates.ApplicationTemplate;
@@ -85,15 +87,20 @@ public final class AppUI extends UITemplate {
     private void clearChart() {
         chart.getData().remove(0, (int) (chart.getData().size()));
     }
+    
+    public String getCurrentText() { return textArea.getText(); }
 
     private void layout() {
+        PropertyManager manager = applicationTemplate.manager;
         FlowPane mainPane = new FlowPane();
+        
         appPane.getChildren().add(mainPane);
         textArea = new TextArea();
-        displayButton = new Button("Display");
+        displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new ScatterChart(xAxis, yAxis);
+        chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
         mainPane.getChildren().add(textArea);
         mainPane.getChildren().add(displayButton);
         mainPane.getChildren().add(chart);
@@ -103,15 +110,19 @@ public final class AppUI extends UITemplate {
     private void setWorkspaceActions() {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
-            if(!textArea.getText().equals("")) {
-                hasNewText = true;
-                newButton.setDisable(false);
-                saveButton.setDisable(false);
-            } else {
-                hasNewText = false;
-                newButton.setDisable(true);
-                saveButton.setDisable(true);
+            if(!newValue.equals(oldValue)) {
+                ((AppActions) applicationTemplate.getActionComponent()).setIsUnsaved(true);
+                if(!newValue.equals("")) {
+                    hasNewText = true;
+                    newButton.setDisable(false);
+                    saveButton.setDisable(false);
+                } else {
+                    hasNewText = false;
+                    newButton.setDisable(true);
+                    saveButton.setDisable(true);
+                }
             }
+            
             
         });
         

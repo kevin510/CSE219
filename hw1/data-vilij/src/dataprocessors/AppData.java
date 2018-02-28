@@ -1,11 +1,19 @@
 package dataprocessors;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import ui.AppUI;
 import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import settings.AppPropertyTypes;
+import vilij.components.Dialog;
 import static vilij.components.Dialog.DialogType.ERROR;
+import vilij.components.ErrorDialog;
+import vilij.propertymanager.PropertyManager;
+import vilij.settings.PropertyTypes;
 
 /**
  * This is the concrete application-specific implementation of the data component defined by the Vilij framework.
@@ -32,14 +40,23 @@ public class AppData implements DataComponent {
         try {
             processor.processString(dataString);
             displayData();
-        } catch (Exception ex) {
-            applicationTemplate.getDialog(ERROR).show(ex.getLocalizedMessage(), ex.getMessage());
+        } catch (Exception e) {
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+            String errMsg = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+            String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
+            dialog.show(errTitle, errMsg + errInput);
         }
     }
 
     @Override
     public void saveData(Path dataFilePath) {
-        // TODO: NOT A PART OF HW 1
+        try (PrintWriter writer = new PrintWriter(Files.newOutputStream(dataFilePath))) {
+            writer.write(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     @Override
