@@ -13,6 +13,7 @@ import vilij.components.ConfirmationDialog;
 
 import javafx.stage.FileChooser;
 import settings.AppPropertyTypes;
+import ui.AppUI;
 
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
@@ -162,6 +163,7 @@ public final class AppActions implements ActionComponent {
     
     private void save() throws IOException {
         applicationTemplate.getDataComponent().saveData(dataFilePath);
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
         isUnsaved = false;
     }
 }

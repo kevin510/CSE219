@@ -89,11 +89,14 @@ public final class AppUI extends UITemplate {
     }
     
     public String getCurrentText() { return textArea.getText(); }
+    
+    public void disableSaveButton() {
+        saveButton.setDisable(true);
+    }
 
     private void layout() {
         PropertyManager manager = applicationTemplate.manager;
         FlowPane mainPane = new FlowPane();
-        
         appPane.getChildren().add(mainPane);
         textArea = new TextArea();
         displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
@@ -122,8 +125,6 @@ public final class AppUI extends UITemplate {
                     saveButton.setDisable(true);
                 }
             }
-            
-            
         });
         
         displayButton.setOnAction((ActionEvent e) -> {
