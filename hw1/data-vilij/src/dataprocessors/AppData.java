@@ -10,7 +10,6 @@ import vilij.templates.ApplicationTemplate;
 import java.nio.file.Path;
 import settings.AppPropertyTypes;
 import vilij.components.Dialog;
-import static vilij.components.Dialog.DialogType.ERROR;
 import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import vilij.settings.PropertyTypes;

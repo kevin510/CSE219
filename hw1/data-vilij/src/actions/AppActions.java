@@ -38,6 +38,11 @@ public final class AppActions implements ActionComponent {
     public void setIsUnsaved(boolean b) {
         isUnsaved = b;
     }
+    
+    public boolean getIsUnsaved() {
+        return isUnsaved;
+    }
+    
     public AppActions(ApplicationTemplate applicationTemplate) {
         this.applicationTemplate = applicationTemplate;
         this.isUnsaved = false;
@@ -46,23 +51,44 @@ public final class AppActions implements ActionComponent {
     @Override
     public void handleNewRequest() {
         try {
-            if (!(isUnsaved == true) || promptToSave()) {
+            if (isUnsaved == true) {
+                boolean b = promptToSave();
+                if(b == true) {
+                    applicationTemplate.getDataComponent().clear();
+                    applicationTemplate.getUIComponent().clear();
+                    isUnsaved = false;
+                    dataFilePath = null;
+                }
+            } else {
                 applicationTemplate.getDataComponent().clear();
                 applicationTemplate.getUIComponent().clear();
                 isUnsaved = false;
                 dataFilePath = null;
             }
-        } catch (IOException e) { ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-        PropertyManager manager  = applicationTemplate.manager;
-        String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
-        String errMsg   = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
-        String errInput = manager.getPropertyValue(AppPropertyTypes.SPECIFIED_FILE.name());
-        dialog.show(errTitle, errMsg + errInput); }
+        } catch (IOException e) { 
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+            String errMsg   = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
+            String errInput = manager.getPropertyValue(AppPropertyTypes.SPECIFIED_FILE.name());
+            dialog.show(errTitle, errMsg + errInput);
+        }
     }
 
     @Override
     public void handleSaveRequest() {
-        // TODO: NOT A PART OF HW 1
+        try {
+            if(isUnsaved == true) {
+               promptToSave(); 
+            }       
+        } catch (IOException e) {
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+            String errMsg   = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
+            String errInput = manager.getPropertyValue(AppPropertyTypes.SPECIFIED_FILE.name());
+            dialog.show(errTitle, errMsg + errInput);
+        }
     }
 
     @Override
