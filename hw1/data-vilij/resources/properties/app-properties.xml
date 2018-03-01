@@ -39,6 +39,7 @@ functionality within the main workspace. -->
         <property name="SPECIFIED_FILE" value=" specified file"/>
         <property name="CHART_TITLE" value="Data Visualization"/>
         <property name="DISPLAY_BUTTON_TEXT" value="Display Data"/>
+        <property name="CHECKBOX_TEXT" value="Read Only"/>
 
     </property_list>
     <property_options_list/>

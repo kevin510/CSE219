@@ -2,6 +2,7 @@ package ui;
 
 import actions.AppActions;
 import dataprocessors.AppData;
+import javafx.scene.control.CheckBox;
 import static java.io.File.separator;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -10,6 +11,7 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.SCREENSHOT_ICON;
@@ -37,6 +39,7 @@ public final class AppUI extends UITemplate {
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
     private String scrnshotIconPath;
+    private CheckBox readChkBox;
     
     public ScatterChart<Number, Number> getChart() { return chart; }
 
@@ -97,8 +100,11 @@ public final class AppUI extends UITemplate {
     private void layout() {
         PropertyManager manager = applicationTemplate.manager;
         FlowPane mainPane = new FlowPane();
+        VBox sidePanel = new VBox();
         appPane.getChildren().add(mainPane);
+        appPane.getChildren().add(sidePanel);
         textArea = new TextArea();
+        readChkBox = new CheckBox(manager.getPropertyValue(AppPropertyTypes.CHECKBOX_TEXT.name()));
         displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
@@ -106,9 +112,10 @@ public final class AppUI extends UITemplate {
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
-        mainPane.getChildren().add(textArea);
-        mainPane.getChildren().add(displayButton);
-        mainPane.getChildren().add(chart);
+        sidePanel.getChildren().addAll(displayButton, readChkBox);
+        mainPane.getChildren().addAll(textArea, sidePanel, chart);
+//        mainPane.getChildren().add(readChkBox);
+//        mainPane.getChildren().add(displayButton);
         
     }
     
@@ -127,6 +134,10 @@ public final class AppUI extends UITemplate {
                     saveButton.setDisable(true);
                 }
             }
+        });
+        
+        readChkBox.setOnAction((ActionEvent e) -> {
+            textArea.setDisable(!textArea.isDisable());
         });
         
         displayButton.setOnAction((ActionEvent e) -> {

@@ -37,5 +37,6 @@ public enum AppPropertyTypes {
     TEXT_AREA,
     SPECIFIED_FILE,
     DISPLAY_BUTTON_TEXT,
-    CHART_TITLE;
+    CHART_TITLE,
+    CHECKBOX_TEXT;
 }
