@@ -7,6 +7,8 @@ functionality within the main workspace. -->
         <!-- RESOURCE FILES AND FOLDERS -->
         <property name="DATA_RESOURCE_PATH" value="data"/>
         
+        <property name="DATA_VILIJ_CSS_NAME" value="data-vilij.css"/>
+        
         <!-- DATA-VILIJ DIRECTORY PATH -->
         <property name="DATA_VILIJ_RESOURCE_PATH" value="data-vilij"/>
         
@@ -40,7 +42,6 @@ functionality within the main workspace. -->
         <property name="CHART_TITLE" value="Data Visualization"/>
         <property name="DISPLAY_BUTTON_TEXT" value="Display Data"/>
         <property name="CHECKBOX_TEXT" value="Read Only"/>
-
     </property_list>
     <property_options_list/>
 </properties>

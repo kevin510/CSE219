@@ -1,6 +1,5 @@
 package dataprocessors;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import ui.AppUI;
@@ -52,9 +51,23 @@ public class AppData implements DataComponent {
     @Override
     public void saveData(Path dataFilePath) {
         try (PrintWriter writer = new PrintWriter(Files.newOutputStream(dataFilePath))) {
+            processor.processString(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
             writer.write(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+        } catch (Exception e) {
+            if(e.getMessage().length() > 1) {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+                String errMsg = e.getMessage();
+                dialog.show(errTitle, errMsg);
+            } else {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+                String errMsg = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name()) + dataFilePath;
+                dialog.show(errTitle, errMsg);
+            }
+            
         }
     }
 

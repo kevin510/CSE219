@@ -30,10 +30,15 @@ public final class TSDProcessor {
 
     private Map<String, String>  dataLabels;
     private Map<String, Point2D> dataPoints;
+    private int lineNumber;
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
         dataPoints = new HashMap<>();
+    }
+    
+    private synchronized void incLineNumber() {
+        lineNumber++;
     }
 
     /**
@@ -43,26 +48,32 @@ public final class TSDProcessor {
      * @throws Exception if the input string does not follow the <code>.tsd</code> data format
      */
     void processString(String tsdString) throws Exception {
+        lineNumber = 0;
         AtomicBoolean hadAnError   = new AtomicBoolean(false);
-        StringBuilder errorMessage = new StringBuilder();
+        StringBuilder errorMessage = new StringBuilder(0);
         Stream.of(tsdString.split("\n"))
               .map(line -> Arrays.asList(line.split("\t")))
               .forEach(list -> {
                   try {
+                      incLineNumber();
                       String   name  = checkedname(list.get(0));
                       String   label = list.get(1);
                       String[] pair  = list.get(2).split(",");
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
                       dataLabels.put(name, label);
                       dataPoints.put(name, point);
+                  } catch (InvalidDataNameException e) {
+                      //errorMessage.setLength(0);
+                      errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
+                      hadAnError.set(true);
                   } catch (Exception e) {
-                      errorMessage.setLength(0);
-                      errorMessage.append(e.getClass().getSimpleName()).append(": ").append(e.getMessage());
+                      errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
                       hadAnError.set(true);
                   }
               });
-        if (errorMessage.length() > 0)
+        if (errorMessage.length() > 0) {
             throw new Exception(errorMessage.toString());
+        }
     }
 
     /**
@@ -89,7 +100,7 @@ public final class TSDProcessor {
     }
 
     private String checkedname(String name) throws InvalidDataNameException {
-        if (!name.startsWith("@"))
+        if (!name.startsWith("@")) 
             throw new InvalidDataNameException(name);
         return name;
     }

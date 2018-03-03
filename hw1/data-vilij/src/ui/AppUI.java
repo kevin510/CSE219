@@ -14,9 +14,11 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import settings.AppPropertyTypes;
+import static settings.AppPropertyTypes.DATA_VILIJ_CSS_NAME;
 import static settings.AppPropertyTypes.SCREENSHOT_ICON;
 import static settings.AppPropertyTypes.SCREENSHOT_TOOLTIP;
 import vilij.propertymanager.PropertyManager;
+import static vilij.settings.PropertyTypes.CSS_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
 import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
 import vilij.templates.ApplicationTemplate;
@@ -109,14 +111,17 @@ public final class AppUI extends UITemplate {
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new ScatterChart(xAxis, yAxis);
+        String cssPath ="/" + String.join(separator,
+                                             manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
+                                             manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
+                                             manager.getPropertyValue(DATA_VILIJ_CSS_NAME.name()));
+        chart.getStylesheets().add(cssPath);
+        
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
         sidePanel.getChildren().addAll(displayButton, readChkBox);
-        mainPane.getChildren().addAll(textArea, sidePanel, chart);
-//        mainPane.getChildren().add(readChkBox);
-//        mainPane.getChildren().add(displayButton);
-        
+        mainPane.getChildren().addAll(textArea, sidePanel, chart);      
     }
     
     private void setWorkspaceActions() {

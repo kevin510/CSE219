@@ -15,6 +15,10 @@ public enum AppPropertyTypes {
     DATA_VILIJ_RESOURCE_PATH,
     
     RESOURCE_PATH,
+    
+    DATA_VILIJ_CSS_PATH,
+    
+    DATA_VILIJ_CSS_NAME,
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
