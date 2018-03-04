@@ -80,7 +80,10 @@ public final class TSDProcessor {
                       errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
                       hadAnError.set(true);
                   } catch (Exception e) {
-                      errorMessage.append(getClass().getSimpleName()).append(": ").append(ERROR_ON_LINE).append(lineNumber).append(" ");
+                      //Limit the size of the error message to 100 chars
+                      if(errorMessage.length() < 100) {
+                          errorMessage.append(getClass().getSimpleName()).append(": ").append(ERROR_ON_LINE).append(lineNumber).append("\n");
+                      }
                       hadAnError.set(true);
                   }
               });

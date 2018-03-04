@@ -30,6 +30,7 @@ public enum AppPropertyTypes {
     RESOURCE_SUBDIR_NOT_FOUND,
 
     /* application-specific message titles */
+    LOAD_WORK_TITLE,
     SAVE_UNSAVED_WORK_TITLE,
 
     /* application-specific messages */

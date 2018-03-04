@@ -1,5 +1,8 @@
 package dataprocessors;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -35,8 +38,36 @@ public class AppData implements DataComponent {
 
     @Override
     public void loadData(Path dataFilePath) {
-        // TODO: NOT A PART OF HW 1
+        try {
+            FileReader reader = new FileReader(dataFilePath.toString());
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            StringBuilder toWrite = new StringBuilder();
+            toWrite.setLength(0);
+            String line;
+            while((line = bufferedReader.readLine()) != null) {
+                toWrite.append(line).append("\n");
+            }
+            processor.processString(toWrite.toString());
+            loadData(toWrite.toString());
+        } catch (Exception e) {
+            if(e.getMessage().length() > 1) {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+                String errMsg = e.getMessage();
+                String errMsg2 = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+                String errInput = dataFilePath.toString();
+                dialog.show(errTitle, errMsg + errMsg2 + errInput);
+            } else {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+                String errMsg = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+                String errInput = dataFilePath.toString();
+                dialog.show(errTitle, errMsg + errInput);
+            }
     }
+}
     
     public void loadData(String dataString) {
         AtomicBoolean hadError = new AtomicBoolean(false);

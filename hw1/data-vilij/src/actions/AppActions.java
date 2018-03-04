@@ -9,10 +9,13 @@ import vilij.templates.ApplicationTemplate;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import vilij.components.ConfirmationDialog;
 
 import javafx.stage.FileChooser;
 import settings.AppPropertyTypes;
+import static settings.AppPropertyTypes.LOAD_WORK_TITLE;
 import ui.AppUI;
 
 import vilij.components.Dialog;
@@ -94,7 +97,19 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleLoadRequest() {
-        // TODO: NOT A PART OF HW 1
+        if(isUnsaved == true) {
+            handleNewRequest();
+        }
+        try {
+            loadHelper();
+        } catch (IOException ex) {
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+            String errMsg   = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+            String errInput = manager.getPropertyValue(AppPropertyTypes.SPECIFIED_FILE.name());
+            dialog.show(errTitle, errMsg + errInput);
+        }
     }
 
     @Override
@@ -161,8 +176,33 @@ public final class AppActions implements ActionComponent {
         return !dialog.getSelectedOption().equals(ConfirmationDialog.Option.CANCEL);
     }
     
+    private boolean loadHelper() throws IOException {
+        PropertyManager    manager = applicationTemplate.manager;
+        FileChooser fileChooser = new FileChooser();
+            String      dataDirPath = separator + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+            URL         dataDirURL  = getClass().getResource(dataDirPath);
+            if (dataDirURL == null)
+                    throw new FileNotFoundException(manager.getPropertyValue(AppPropertyTypes.RESOURCE_SUBDIR_NOT_FOUND.name()));
+
+                fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
+                fileChooser.setTitle(manager.getPropertyValue(LOAD_WORK_TITLE.name()));
+                
+        File selected = fileChooser.showOpenDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+        if (selected != null) {
+            dataFilePath = selected.toPath();
+            load();
+        } else return false;
+        return true;
+    }
+    
     private void save() throws IOException {
         applicationTemplate.getDataComponent().saveData(dataFilePath);
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
+        isUnsaved = false;
+    }
+    
+    private void load() throws IOException {
+        applicationTemplate.getDataComponent().loadData(dataFilePath);
         ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
         isUnsaved = false;
     }
