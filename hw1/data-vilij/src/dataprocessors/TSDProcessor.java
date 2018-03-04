@@ -21,6 +21,10 @@ import java.util.stream.Stream;
  */
 public final class TSDProcessor {
     
+    private int sumOfY;
+    private int divBy;
+    private int largestX;
+    
     private static final String ERROR_ON_LINE = "Error on Line ";
 
     public static class InvalidDataNameException extends Exception {
@@ -63,6 +67,9 @@ public final class TSDProcessor {
      */
     void processString(String tsdString) throws Exception {
         lineNumber = 0;
+        sumOfY = 0;
+        divBy = 0;
+        largestX = 0;
         AtomicBoolean hadAnError   = new AtomicBoolean(false);
         StringBuilder errorMessage = new StringBuilder(0);
         Stream.of(tsdString.split("\n"))
@@ -73,6 +80,11 @@ public final class TSDProcessor {
                       String   name  = checkedname(list.get(0));
                       String   label = list.get(1);
                       String[] pair  = list.get(2).split(",");
+                      sumOfY += Double.parseDouble(pair[1]);
+                      divBy++;
+                      if(Double.parseDouble(pair[0]) > largestX) {
+                          largestX = (int) Double.parseDouble(pair[0]);
+                      }
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
                       dataLabels.put(name, label);
                       dataPoints.put(name, point);
@@ -82,11 +94,7 @@ public final class TSDProcessor {
                         errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
                         hadAnError.set(true);
                       }
-//                  } //catch(NameTakenException e) {
-//                      if(!(errorMessage.length() > 0)) {
-//                        errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
-//                        hadAnError.set(true);
-//                      }
+
                   } catch (Exception e) {
                       if(!(errorMessage.length() > 0)) {
                           errorMessage.append(getClass().getSimpleName()).append(": ").append(ERROR_ON_LINE).append(lineNumber).append("\n");
@@ -106,6 +114,12 @@ public final class TSDProcessor {
      */
     public void toChartData(XYChart<Number, Number> chart) {
         Set<String> labels = new HashSet<>(dataLabels.values());
+        sumOfY = sumOfY / divBy;
+        XYChart.Series<Number, Number> avgLine = new XYChart.Series<>();
+        avgLine.setName("Average");
+        avgLine.getData().add(new XYChart.Data<>(0, sumOfY));
+        avgLine.getData().add(new XYChart.Data<>(largestX, sumOfY));
+        chart.getData().add(avgLine);
         for (String label : labels) {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             series.setName(label);

@@ -100,6 +100,7 @@ public class AppData implements DataComponent {
     public void saveData(Path dataFilePath) {
         AtomicBoolean hadError = new AtomicBoolean(false);
         try  {
+            processor.dataNameCheck(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
             processor.processString(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
         } catch (Exception e) {
             ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -107,7 +108,7 @@ public class AppData implements DataComponent {
             String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
             String errMsg = e.getMessage();
             String errMsg2 = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
-            String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
+            String errInput = dataFilePath.toString();
             dialog.show(errTitle, errMsg + errMsg2 + errInput);
             hadError.set(true);
         }

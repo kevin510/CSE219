@@ -7,6 +7,7 @@ import static java.io.File.separator;
 import java.io.IOException;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
@@ -37,14 +38,14 @@ public final class AppUI extends UITemplate {
 
     @SuppressWarnings("FieldCanBeLocal")
     private Button                       scrnshotButton; // toolbar button to take a screenshot of the data
-    private ScatterChart<Number, Number> chart;          // the chart where data will be displayed
+    private LineChart<Number, Number> chart;          // the chart where data will be displayed
     private Button                       displayButton;  // workspace button to display data on the chart
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
     private String scrnshotIconPath;
     private CheckBox readChkBox;
     
-    public ScatterChart<Number, Number> getChart() { return chart; }
+    public LineChart<Number, Number> getChart() { return chart; }
 
     public AppUI(Stage primaryStage, ApplicationTemplate applicationTemplate) {
         super(primaryStage, applicationTemplate);
@@ -107,6 +108,8 @@ public final class AppUI extends UITemplate {
     
     public String getCurrentText() { return textArea.getText(); }
     
+    public void setCurrentText(String data) { textArea.setText(data); }
+    
     public void disableSaveButton() {
         saveButton.setDisable(true);
     }
@@ -122,7 +125,7 @@ public final class AppUI extends UITemplate {
         displayButton = new Button(manager.getPropertyValue(AppPropertyTypes.DISPLAY_BUTTON_TEXT.name()));
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
-        chart = new ScatterChart(xAxis, yAxis);
+        chart = new LineChart(xAxis, yAxis);
         String cssPath ="/" + String.join(separator,
                                              manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
