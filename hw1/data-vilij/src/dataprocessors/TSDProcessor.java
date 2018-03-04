@@ -5,6 +5,8 @@ import javafx.scene.chart.XYChart;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -18,12 +20,23 @@ import java.util.stream.Stream;
  * @see XYChart
  */
 public final class TSDProcessor {
+    
+    private static final String ERROR_ON_LINE = "Error on Line ";
 
     public static class InvalidDataNameException extends Exception {
 
         private static final String NAME_ERROR_MSG = "All data instance names must start with the @ character.";
 
         public InvalidDataNameException(String name) {
+            super(String.format("Invalid name '%s'." + NAME_ERROR_MSG, name));
+        }
+    }
+    
+    public static class InvalidDataFormatException extends Exception {
+
+        private static final String NAME_ERROR_MSG = "Invalid data on line ";
+
+        public InvalidDataFormatException(String name) {
             super(String.format("Invalid name '%s'." + NAME_ERROR_MSG, name));
         }
     }
@@ -53,7 +66,7 @@ public final class TSDProcessor {
         StringBuilder errorMessage = new StringBuilder(0);
         Stream.of(tsdString.split("\n"))
               .map(line -> Arrays.asList(line.split("\t")))
-              .forEach(list -> {
+              .forEach((List<String> list) -> {
                   try {
                       incLineNumber();
                       String   name  = checkedname(list.get(0));
@@ -67,7 +80,7 @@ public final class TSDProcessor {
                       errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
                       hadAnError.set(true);
                   } catch (Exception e) {
-                      errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
+                      errorMessage.append(getClass().getSimpleName()).append(": ").append(ERROR_ON_LINE).append(lineNumber).append(" ");
                       hadAnError.set(true);
                   }
               });
@@ -104,4 +117,14 @@ public final class TSDProcessor {
             throw new InvalidDataNameException(name);
         return name;
     }
+    
+//    private void checkdata(String name) throws InvalidDataFormatException {
+//        Pattern valid = Pattern.compile("@[a-zA-Z_0-9]*\t[a-zA-Z_0-9]*\t[0-9]*,[0-9]*\n?");
+//        Matcher m = valid.matcher(name);
+//        boolean b = m.matches();
+//        if(b != true) {
+//            throw new InvalidDataFormatException(name);
+//        } else {
+//        }
+//    }
 }

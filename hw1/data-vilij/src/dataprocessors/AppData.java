@@ -1,5 +1,6 @@
 package dataprocessors;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import ui.AppUI;
@@ -7,6 +8,9 @@ import vilij.components.DataComponent;
 import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import settings.AppPropertyTypes;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
@@ -35,39 +39,60 @@ public class AppData implements DataComponent {
     }
     
     public void loadData(String dataString) {
+        AtomicBoolean hadError = new AtomicBoolean(false);
         try {
             processor.processString(dataString);
             displayData();
         } catch (Exception e) {
-            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-            PropertyManager manager  = applicationTemplate.manager;
-            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
-            String errMsg = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
-            String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
-            dialog.show(errTitle, errMsg + errInput);
+            if(e.getMessage().length() > 1) {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+                String errMsg = e.getMessage();
+                String errMsg2 = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+                String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
+                hadError.set(true);
+                dialog.show(errTitle, errMsg + errMsg2 + errInput);
+            } else {
+                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+                PropertyManager manager  = applicationTemplate.manager;
+                String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+                String errMsg = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_MSG.name());
+                String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
+                hadError.set(true);
+                dialog.show(errTitle, errMsg + errInput);
+            }
         }
+
     }
 
     @Override
     public void saveData(Path dataFilePath) {
-        try (PrintWriter writer = new PrintWriter(Files.newOutputStream(dataFilePath))) {
+        AtomicBoolean hadError = new AtomicBoolean(false);
+        try  {
             processor.processString(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
-            writer.write(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
         } catch (Exception e) {
-            if(e.getMessage().length() > 1) {
-                ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-                PropertyManager manager  = applicationTemplate.manager;
-                String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
-                String errMsg = e.getMessage();
-                dialog.show(errTitle, errMsg);
-            } else {
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
+            String errMsg = e.getMessage();
+            String errMsg2 = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name());
+            String errInput = manager.getPropertyValue(AppPropertyTypes.TEXT_AREA.name());
+            dialog.show(errTitle, errMsg + errMsg2 + errInput);
+            hadError.set(true);
+        }
+        if(hadError.get() == false) {
+            PrintWriter writer;
+            try {
+                writer = new PrintWriter(Files.newOutputStream(dataFilePath));
+                writer.write(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
+            } catch (IOException ex) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                 PropertyManager manager  = applicationTemplate.manager;
                 String errTitle = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_TITLE.name());
                 String errMsg = manager.getPropertyValue(PropertyTypes.SAVE_ERROR_MSG.name()) + dataFilePath;
                 dialog.show(errTitle, errMsg);
             }
-            
         }
     }
 

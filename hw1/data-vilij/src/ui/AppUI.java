@@ -116,7 +116,6 @@ public final class AppUI extends UITemplate {
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(DATA_VILIJ_CSS_NAME.name()));
         chart.getStylesheets().add(cssPath);
-        
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
@@ -153,6 +152,6 @@ public final class AppUI extends UITemplate {
                 dat.loadData(plot);
                 hasNewText = false;
             }
-        });
+        });       
     }
 }
