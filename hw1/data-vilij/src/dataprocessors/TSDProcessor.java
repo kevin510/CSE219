@@ -32,18 +32,19 @@ public final class TSDProcessor {
         }
     }
     
-    public static class InvalidDataFormatException extends Exception {
+    public static class NameTakenException extends Exception {
 
-        private static final String NAME_ERROR_MSG = "Invalid data on line ";
+        private static final String ERROR_MSG = "already exists. First duplicate on line: ";
 
-        public InvalidDataFormatException(String name) {
-            super(String.format("Invalid name '%s'." + NAME_ERROR_MSG, name));
+        public NameTakenException(String name) {
+            super(String.format("'%s' " + ERROR_MSG, name));
         }
     }
 
     private Map<String, String>  dataLabels;
     private Map<String, Point2D> dataPoints;
     private int lineNumber;
+    private HashSet<String> nameCheck;
 
     public TSDProcessor() {
         dataLabels = new HashMap<>();
@@ -75,13 +76,19 @@ public final class TSDProcessor {
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
                       dataLabels.put(name, label);
                       dataPoints.put(name, point);
+
                   } catch (InvalidDataNameException e) {
-                      //errorMessage.setLength(0);
-                      errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
-                      hadAnError.set(true);
+                      if(!(errorMessage.length() > 0)) {
+                        errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
+                        hadAnError.set(true);
+                      }
+//                  } //catch(NameTakenException e) {
+//                      if(!(errorMessage.length() > 0)) {
+//                        errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage());
+//                        hadAnError.set(true);
+//                      }
                   } catch (Exception e) {
-                      //Limit the size of the error message to 100 chars
-                      if(errorMessage.length() < 100) {
+                      if(!(errorMessage.length() > 0)) {
                           errorMessage.append(getClass().getSimpleName()).append(": ").append(ERROR_ON_LINE).append(lineNumber).append("\n");
                       }
                       hadAnError.set(true);
@@ -109,6 +116,30 @@ public final class TSDProcessor {
             chart.getData().add(series);
         }
     }
+    
+    public void dataNameCheck(String data) throws Exception {
+        AtomicBoolean hadAnError   = new AtomicBoolean(false);
+        StringBuilder errorMessage = new StringBuilder(0);
+        nameCheck = new HashSet<>();
+        lineNumber = 0;
+        Stream.of(data.split("\n"))
+              .map(line -> Arrays.asList(line.split("\t")))
+              .forEach((List<String> list) -> {
+                  try {
+                      incLineNumber();
+                      String   name  = nameExists(list.get(0));
+                      nameCheck.add(name);
+                  } catch (NameTakenException e) {
+                      if(!(errorMessage.length() > 0)) {
+                        errorMessage.append(getClass().getSimpleName()).append(": ").append(e.getMessage()).append(lineNumber);
+                        hadAnError.set(true);
+                      }
+                  }
+              });
+        if (errorMessage.length() > 0) {
+            throw new Exception(errorMessage.toString());
+        }
+    }
 
     void clear() {
         dataPoints.clear();
@@ -121,13 +152,10 @@ public final class TSDProcessor {
         return name;
     }
     
-//    private void checkdata(String name) throws InvalidDataFormatException {
-//        Pattern valid = Pattern.compile("@[a-zA-Z_0-9]*\t[a-zA-Z_0-9]*\t[0-9]*,[0-9]*\n?");
-//        Matcher m = valid.matcher(name);
-//        boolean b = m.matches();
-//        if(b != true) {
-//            throw new InvalidDataFormatException(name);
-//        } else {
-//        }
-//    }
+    private String nameExists(String name) throws NameTakenException {
+        if(nameCheck.contains(name))
+            throw new NameTakenException(name);
+        return name;
+    }
+    
 }

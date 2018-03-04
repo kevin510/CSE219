@@ -4,6 +4,7 @@ import actions.AppActions;
 import dataprocessors.AppData;
 import javafx.scene.control.CheckBox;
 import static java.io.File.separator;
+import java.io.IOException;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.chart.NumberAxis;
@@ -74,6 +75,17 @@ public final class AppUI extends UITemplate {
         loadButton.setOnAction(e -> applicationTemplate.getActionComponent().handleLoadRequest());
         exitButton.setOnAction(e -> applicationTemplate.getActionComponent().handleExitRequest());
         printButton.setOnAction(e -> applicationTemplate.getActionComponent().handlePrintRequest());
+
+        scrnshotButton.setOnAction(e -> {
+            try {
+                ((AppActions) applicationTemplate.getActionComponent()).handleScreenshotRequest();
+            } catch (IOException ex) {
+                
+            }
+        });
+
+            
+        
     }
 
     @Override

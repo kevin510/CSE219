@@ -11,6 +11,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
 import vilij.components.ConfirmationDialog;
 
 import javafx.stage.FileChooser;
@@ -123,7 +125,8 @@ public final class AppActions implements ActionComponent {
     }
 
     public void handleScreenshotRequest() throws IOException {
-        // TODO: NOT A PART OF HW 1
+        WritableImage image = ((AppUI) applicationTemplate.getUIComponent()).getChart()
+                .snapshot(new SnapshotParameters(), null);
     }
 
     /**
@@ -194,7 +197,7 @@ public final class AppActions implements ActionComponent {
         } else return false;
         return true;
     }
-    
+        
     private void save() throws IOException {
         applicationTemplate.getDataComponent().saveData(dataFilePath);
         ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();

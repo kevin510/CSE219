@@ -1,7 +1,6 @@
 package dataprocessors;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,8 +11,6 @@ import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import settings.AppPropertyTypes;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
@@ -47,6 +44,7 @@ public class AppData implements DataComponent {
             while((line = bufferedReader.readLine()) != null) {
                 toWrite.append(line).append("\n");
             }
+            processor.dataNameCheck(toWrite.toString());
             processor.processString(toWrite.toString());
             loadData(toWrite.toString());
         } catch (Exception e) {
@@ -72,6 +70,7 @@ public class AppData implements DataComponent {
     public void loadData(String dataString) {
         AtomicBoolean hadError = new AtomicBoolean(false);
         try {
+            processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
         } catch (Exception e) {
