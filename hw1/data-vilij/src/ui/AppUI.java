@@ -9,7 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
@@ -141,6 +140,11 @@ public final class AppUI extends UITemplate {
     private void setWorkspaceActions() {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
+//        if(!chart.getData().isEmpty()) {
+//            scrnshotButton.setDisable(false);
+//        } else {
+//            scrnshotButton.setDisable(true);
+//        }
             if(!newValue.equals(oldValue)) {
                 ((AppActions) applicationTemplate.getActionComponent()).setIsUnsaved(true);
                 if(!newValue.equals("")) {
@@ -154,7 +158,7 @@ public final class AppUI extends UITemplate {
                 }
             }
         });
-        
+                
         readChkBox.setOnAction((ActionEvent e) -> {
             textArea.setDisable(!textArea.isDisable());
         });

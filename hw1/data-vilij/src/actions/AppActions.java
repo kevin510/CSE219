@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import vilij.components.ConfirmationDialog;
 
 import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.LOAD_WORK_TITLE;
 import ui.AppUI;
@@ -130,6 +132,31 @@ public final class AppActions implements ActionComponent {
     public void handleScreenshotRequest() throws IOException {
         WritableImage image = ((AppUI) applicationTemplate.getUIComponent()).getChart()
                 .snapshot(new SnapshotParameters(), null);
+        PropertyManager    manager = applicationTemplate.manager;
+        FileChooser fileChooser = new FileChooser();
+                String      dataDirPath = separator + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+                URL         dataDirURL  = getClass().getResource(dataDirPath);
+
+                if (dataDirURL == null)
+                    throw new FileNotFoundException(manager.getPropertyValue(AppPropertyTypes.RESOURCE_SUBDIR_NOT_FOUND.name()));
+
+                fileChooser.setInitialDirectory(new File(dataDirURL.getFile()));
+                fileChooser.setTitle(manager.getPropertyValue(SAVE_WORK_TITLE.name()));
+
+                String description = manager.getPropertyValue(AppPropertyTypes.PNG_FILE_EXT_DESC.name());
+                String extension   = manager.getPropertyValue(AppPropertyTypes.PNG_FILE_EXT.name());
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(String.format("%s (.*%s)", description, extension),
+                                                                String.format("*.%s", extension));
+
+                fileChooser.getExtensionFilters().add(extFilter);
+                File selected = fileChooser.showSaveDialog(applicationTemplate.getUIComponent().getPrimaryWindow());
+                if(selected != null) {
+                    try {
+                        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", selected); // TODO: handle exception here
+                    } catch(IOException e) {
+
+                    }
+                }
     }
 
     /**
@@ -206,7 +233,7 @@ public final class AppActions implements ActionComponent {
         ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
         isUnsaved = false;
     }
-    
+        
     private void load() throws IOException {
         applicationTemplate.getDataComponent().loadData(dataFilePath);
         ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();

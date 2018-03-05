@@ -45,9 +45,11 @@ public class AppData implements DataComponent {
             while((line = bufferedReader.readLine()) != null) {
                 toWrite.append(line).append("\n");
             }
-            processor.dataNameCheck(toWrite.toString());
-            processor.processString(toWrite.toString());
-            loadData(toWrite.toString());
+            String data = toWrite.toString();
+            processor.dataNameCheck(data);
+            processor.processString(data);
+            loadData(data);
+            loadTextAreaHelper(data);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -74,7 +76,6 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
-            loadTextAreaHelper(dataString);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
