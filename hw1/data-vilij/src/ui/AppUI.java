@@ -103,6 +103,7 @@ public final class AppUI extends UITemplate {
     
     private void clearChart() {
         chart.getData().remove(0, (int) (chart.getData().size()));
+        scrnshotButton.setDisable(true);
     }
     
     public String getCurrentText() { return textArea.getText(); }
@@ -111,6 +112,10 @@ public final class AppUI extends UITemplate {
     
     public void disableSaveButton() {
         saveButton.setDisable(true);
+    }
+    
+    public void enableScreenshotButton() {
+        scrnshotButton.setDisable(false);
     }
 
     private void layout() {

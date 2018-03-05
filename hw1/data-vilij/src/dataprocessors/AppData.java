@@ -76,6 +76,7 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
+            ((AppUI) applicationTemplate.getUIComponent()).enableScreenshotButton();
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
