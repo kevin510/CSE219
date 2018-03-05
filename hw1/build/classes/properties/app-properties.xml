@@ -43,6 +43,7 @@ functionality within the main workspace. -->
         <property name="CHART_TITLE" value="Data Visualization"/>
         <property name="DISPLAY_BUTTON_TEXT" value="Display Data"/>
         <property name="CHECKBOX_TEXT" value="Read Only"/>
+        <property name="LOADING_10_OF" value="Loading 10 out of "/>
     </property_list>
     <property_options_list/>
 </properties>

@@ -43,5 +43,6 @@ public enum AppPropertyTypes {
     SPECIFIED_FILE,
     DISPLAY_BUTTON_TEXT,
     CHART_TITLE,
+    LOADING_10_OF,
     CHECKBOX_TEXT;
 }

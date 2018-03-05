@@ -82,6 +82,7 @@ public final class TSDProcessor {
                       String[] pair  = list.get(2).split(",");
                       sumOfY += Double.parseDouble(pair[1]);
                       divBy++;
+                      
                       if(Double.parseDouble(pair[0]) > largestX) {
                           largestX = (int) Double.parseDouble(pair[0]);
                       }

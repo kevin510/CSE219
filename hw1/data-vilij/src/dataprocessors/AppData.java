@@ -11,6 +11,7 @@ import vilij.templates.ApplicationTemplate;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 import settings.AppPropertyTypes;
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
@@ -73,6 +74,7 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
+            loadTextAreaHelper(dataString);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -125,6 +127,25 @@ public class AppData implements DataComponent {
                 dialog.show(errTitle, errMsg);
             }
         }
+    }
+    
+    private void loadTextAreaHelper(String dataString) {
+        StringBuilder forTextArea = new StringBuilder(0);
+        Stream.of(dataString.split("\n"))
+                .map(line -> line)
+                .limit(10)
+                .forEach((String line) -> {
+                    forTextArea.append(line).append("\n");
+                });
+        int count = (int) Stream.of(dataString.split("\n")).count();
+        if(count > 10) {
+            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+            PropertyManager manager  = applicationTemplate.manager;
+            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+            String errMsg = manager.getPropertyValue(AppPropertyTypes.LOADING_10_OF.name());
+            dialog.show(errTitle, errMsg + count);
+        }
+        ((AppUI) applicationTemplate.getUIComponent()).setCurrentText(forTextArea.toString());
     }
 
     @Override

@@ -8,9 +8,8 @@ import vilij.templates.ApplicationTemplate;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import vilij.components.ConfirmationDialog;
@@ -47,6 +46,10 @@ public final class AppActions implements ActionComponent {
     
     public boolean getIsUnsaved() {
         return isUnsaved;
+    }
+    
+    public boolean pathNull() {
+        return !(dataFilePath == null && !Files.exists(dataFilePath));
     }
     
     public AppActions(ApplicationTemplate applicationTemplate) {
