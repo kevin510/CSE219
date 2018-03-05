@@ -21,9 +21,9 @@ import java.util.stream.Stream;
  */
 public final class TSDProcessor {
     
-    private int sumOfY;
+    private double sumOfY;
     private int divBy;
-    private int largestX;
+    private double largestX;
     
     private static final String ERROR_ON_LINE = "Error on Line ";
 
@@ -84,7 +84,7 @@ public final class TSDProcessor {
                       divBy++;
                       
                       if(Double.parseDouble(pair[0]) > largestX) {
-                          largestX = (int) Double.parseDouble(pair[0]);
+                          largestX = Double.parseDouble(pair[0]);
                       }
                       Point2D  point = new Point2D(Double.parseDouble(pair[0]), Double.parseDouble(pair[1]));
                       dataLabels.put(name, label);

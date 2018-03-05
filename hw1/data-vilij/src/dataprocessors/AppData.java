@@ -118,9 +118,12 @@ public class AppData implements DataComponent {
         }
         if(hadError.get() == false) {
             PrintWriter writer;
+            System.out.println("saving");
             try {
                 writer = new PrintWriter(Files.newOutputStream(dataFilePath));
                 writer.write(((AppUI) applicationTemplate.getUIComponent()).getCurrentText());
+                writer.flush();
+                writer.close();
             } catch (IOException ex) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
                 PropertyManager manager  = applicationTemplate.manager;

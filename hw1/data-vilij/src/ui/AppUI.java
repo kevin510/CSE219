@@ -145,11 +145,6 @@ public final class AppUI extends UITemplate {
     private void setWorkspaceActions() {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
-//        if(!chart.getData().isEmpty()) {
-//            scrnshotButton.setDisable(false);
-//        } else {
-//            scrnshotButton.setDisable(true);
-//        }
             if(!newValue.equals(oldValue)) {
                 ((AppActions) applicationTemplate.getActionComponent()).setIsUnsaved(true);
                 if(!newValue.equals("")) {
