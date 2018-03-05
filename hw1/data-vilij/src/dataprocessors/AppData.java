@@ -28,6 +28,7 @@ public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
     private ApplicationTemplate applicationTemplate;
+    private StringBuilder allData = new StringBuilder(0);
 
     public AppData(ApplicationTemplate applicationTemplate) {
         this.processor = new TSDProcessor();
@@ -46,10 +47,11 @@ public class AppData implements DataComponent {
                 toWrite.append(line).append("\n");
             }
             String data = toWrite.toString();
+            allData.append(data);
             processor.dataNameCheck(data);
             processor.processString(data);
+            loadTextAreaHelper(allData.toString());
             loadData(data);
-            loadTextAreaHelper(data);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);

@@ -7,6 +7,7 @@ import static java.io.File.separator;
 import java.io.IOException;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
@@ -161,6 +162,14 @@ public final class AppUI extends UITemplate {
                 
         readChkBox.setOnAction((ActionEvent e) -> {
             textArea.setDisable(!textArea.isDisable());
+        });
+        
+        chart.setOnMouseEntered(e -> {
+            chart.setCursor(Cursor.HAND);
+        });
+        
+        chart.setOnMouseExited(e -> {
+            chart.setCursor(Cursor.DEFAULT);
         });
         
         displayButton.setOnAction((ActionEvent e) -> {
