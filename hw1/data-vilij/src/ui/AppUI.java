@@ -161,7 +161,7 @@ public final class AppUI extends UITemplate {
         });
                 
         readChkBox.setOnAction((ActionEvent e) -> {
-        textArea.setDisable(!textArea.isDisable());
+            textArea.setDisable(!textArea.isDisable());
         });
         
         chart.setOnMouseEntered(e -> {
