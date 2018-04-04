@@ -183,7 +183,7 @@ public final class AppActions implements ActionComponent {
         if (dialog.getSelectedOption().equals(ConfirmationDialog.Option.YES)) {
             if (dataFilePath == null) {
                 FileChooser fileChooser = new FileChooser();
-                String      dataDirPath = separator + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+                String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
                 URL         dataDirURL  = getClass().getResource(dataDirPath);
 
                 if (dataDirURL == null)
@@ -212,7 +212,7 @@ public final class AppActions implements ActionComponent {
     private boolean loadHelper() throws IOException {
         PropertyManager    manager = applicationTemplate.manager;
         FileChooser fileChooser = new FileChooser();
-            String      dataDirPath = separator + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+            String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
             URL         dataDirURL  = getClass().getResource(dataDirPath);
             if (dataDirURL == null)
                     throw new FileNotFoundException(manager.getPropertyValue(AppPropertyTypes.RESOURCE_SUBDIR_NOT_FOUND.name()));

@@ -13,7 +13,7 @@ functionality within the main workspace. -->
         <property name="DATA_VILIJ_RESOURCE_PATH" value="data-vilij"/>
         
         <!-- RESOURCE DIRECTORY PATH -->
-        <property name="RESOURCE_PATH" value="resource"/>
+        <property name="RESOURCE_PATH" value="resources"/>
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>

@@ -68,6 +68,27 @@ public class Main extends Application {
         cancelBtn.setOnAction(e -> cancelTask());
         buttonBox.getChildren().add(cancelBtn);
         
+        Button mandelbrot = new Button("Mandelbrot");
+        mandelbrot.setOnAction(e -> {
+            if(task != null)
+                task.cancel();
+            task = new MandelbrotTask();
+        
+        final ImageView currentValueImage = new ImageView();
+        root.setCenter(currentValueImage);
+        primaryStage.sizeToScene();
+            task.getPartialResultProperty().addListener
+                ((obs, os, ns) -> currentValueImage.setImage((Image) ns));
+            task.messageProperty().addListener((obs, ov, nv) -> statusLabel.setText(nv));
+            task.progressProperty().addListener
+                ((obs, ov, nv) -> progressLabel.setText(((int)(nv.doubleValue() * 100)) + "% complete"));
+               
+            Thread t = new Thread(task);
+            t.setDaemon(true);
+            t.start();
+            });
+        buttonBox.getChildren().add(mandelbrot);
+        
         Scene scene = new Scene(root);
         primaryStage.setTitle("Compute Task Demo");
         primaryStage.setScene(scene);

@@ -44,6 +44,7 @@ public final class AppUI extends UITemplate {
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
     private String scrnshotIconPath;
     private CheckBox readChkBox;
+    private String cssPathUI;
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -55,7 +56,7 @@ public final class AppUI extends UITemplate {
     @Override
     protected void setResourcePaths(ApplicationTemplate applicationTemplate) {
         super.setResourcePaths(applicationTemplate);
-        String iconsPath = separator + String.join(separator,
+        String iconsPath = "/" + String.join(separator,
                                              applicationTemplate.manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              applicationTemplate.manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
         scrnshotIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name()));
@@ -131,11 +132,11 @@ public final class AppUI extends UITemplate {
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new LineChart(xAxis, yAxis);
-        String cssPath ="/" + String.join(separator,
+        cssPathUI = "/" + String.join(separator,
                                              manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(DATA_VILIJ_CSS_NAME.name()));
-        chart.getStylesheets().add(cssPath);
+        chart.getStylesheets().add(cssPathUI);
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
