@@ -124,7 +124,7 @@ public final class AppUI extends UITemplate {
         textArea = new TextArea();
         GridPane.setRowIndex(textArea, 0);
         GridPane.setColumnIndex(textArea, 0);
-        textArea.setVisible(false);
+        //textArea.setVisible(false);
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new LineChart(xAxis, yAxis);
@@ -135,7 +135,6 @@ public final class AppUI extends UITemplate {
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(DATA_VILIJ_CSS_NAME.name()));
         mainPane.getStylesheets().add(cssPathUI);
-        //chart.getStyleClass().add("chart");
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
