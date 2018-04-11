@@ -46,5 +46,6 @@ public enum AppPropertyTypes {
     LOADING_10_OF,
     PNG_FILE_EXT,
     PNG_FILE_EXT_DESC,
-    CHECKBOX_TEXT;
+    CLASSIFICATION_ALG,
+    CLUSTERING_ALG
 }
