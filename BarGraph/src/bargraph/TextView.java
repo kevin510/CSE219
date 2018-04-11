@@ -34,6 +34,7 @@ public class TextView extends VBox implements DataListener {
             text.setOnAction(e -> {
                 try {
                     data.setValue(ii, Double.parseDouble(text.getText()));
+                    //dataChanged(ii, Double.parseDouble(text.getText()));
                 } catch (NumberFormatException x) {
                 }
             });
@@ -42,7 +43,7 @@ public class TextView extends VBox implements DataListener {
 
     @Override
     public void dataChanged(int index, double value) {
-        // TODO Auto-generated method stub
+        ((NumericField) (getChildren().get(index))).setText(Double.toString(value));
     }
 
 }

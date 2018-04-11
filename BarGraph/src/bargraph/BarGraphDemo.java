@@ -27,6 +27,7 @@ public class BarGraphDemo extends Application {
     private TextView textView;
     private BarGraphView graphView;
     private DataModel data;
+    private ScalingStrategy strat;
 	
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -55,10 +56,17 @@ public class BarGraphDemo extends Application {
         MenuItem linearScaleItem = new MenuItem("Linear");
         ScalingStrategy linearScale = new LinearScalingStrategy(SCALE);
         menu.getItems().addAll(linearScaleItem);
+        MenuItem LogScaleItem = new MenuItem("Log");
+        ScalingStrategy logScale = new LogScalingStrategy(10, SCALE);
+        menu.getItems().addAll(LogScaleItem);
+        menu.setOnAction(e -> {
+            
+        });
         graphView = new BarGraphView(data, SCALE, SCALE*20, SCALE);
         content.setCenter(graphView);
-        
         secondaryStage.show();
+        data.subscribe(textView);
+        data.subscribe(graphView);
     }
 	
     public static void main(String[] args) {

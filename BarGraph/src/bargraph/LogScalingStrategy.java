@@ -28,12 +28,14 @@ public class LogScalingStrategy implements ScalingStrategy {
 
     @Override
     public double dataToPixels(double data) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Math.pow(10, data);
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public double pixelsToData(double pixels) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Math.log10(pixels);
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
    
 }

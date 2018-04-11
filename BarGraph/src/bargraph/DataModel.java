@@ -14,6 +14,8 @@ import java.util.ArrayList;
 public class DataModel {
     
     private final ArrayList<Double> data;
+    private ArrayList<DataListener> views;
+    //private final ArrayL
 
     /**
      * Initialize a data model with a specified sequence of values.
@@ -25,6 +27,7 @@ public class DataModel {
         for (int i = 0; i < dataValues.length; i++) {
             data.add(dataValues[i]);
         }
+        views = new ArrayList<>();
     }
 
     /**
@@ -54,6 +57,13 @@ public class DataModel {
      */
     public void setValue(int i, double v) {
         data.set(i, v);
+        views.forEach((d) -> {
+            d.dataChanged(i, v);
+        });
+    }
+    
+    public void subscribe(DataListener d) {
+        views.add(d);
     }
     
 }

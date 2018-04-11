@@ -19,6 +19,7 @@ public class BarGraphView extends VBox implements DataListener {
     private final int barWidth;
     private final int barHeight;
     private final List<BarGraphBar> bars;
+    public ScalingStrategy strat;
 
     /**
      * Initialize a BarGraphView.
@@ -42,7 +43,10 @@ public class BarGraphView extends VBox implements DataListener {
             double value = data.getValue(i);
             BarGraphBar bar = new BarGraphBar(value, this, barWidth, barHeight);
             final int ii = i;
-            bar.setOnMouseClicked(e -> data.setValue(ii, e.getX() / scale));
+            bar.setOnMouseClicked(e -> {
+                data.setValue(ii, e.getX() / scale);
+                //dataChanged(ii, e.getX() / scale);
+            });
             getChildren().add(bar);
             bars.add(bar);
        }
@@ -69,7 +73,7 @@ public class BarGraphView extends VBox implements DataListener {
     
     @Override
     public void dataChanged(int index, double value) {
-        // TODO Fill this in.
+        bars.get(index).setValue(value);
     }
 
 }
