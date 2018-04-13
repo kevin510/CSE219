@@ -230,13 +230,13 @@ public final class AppActions implements ActionComponent {
         
     private void save() throws IOException {
         applicationTemplate.getDataComponent().saveData(dataFilePath);
-        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(true);
         isUnsaved = false;
     }
         
     private void load() throws IOException {
         applicationTemplate.getDataComponent().loadData(dataFilePath);
-        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(true);
         isUnsaved = false;
     }
 }

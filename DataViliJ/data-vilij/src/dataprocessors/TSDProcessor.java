@@ -173,4 +173,20 @@ public final class TSDProcessor {
         return name;
     }
     
+    public int getNumInstances() {
+        return dataPoints.size();
+    }
+    
+    public int getNumLabels() {
+        return dataLabels.size();
+    }
+    
+    public String getLabels() {
+        StringBuilder labels = new StringBuilder();
+        dataLabels.values().forEach((dat) -> {
+            labels.append(dat).append(", ");
+        });
+        return labels.toString();
+    }
+    
 }

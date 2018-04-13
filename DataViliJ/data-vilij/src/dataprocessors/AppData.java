@@ -49,6 +49,9 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(data);
             processor.processString(data);
             loadTextAreaHelper(data);
+            ((AppUI) applicationTemplate.getUIComponent()).setLabels(
+                    Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
+                    processor.getLabels(), dataFilePath.toString());
             loadData(data);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
@@ -76,7 +79,7 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
-            ((AppUI) applicationTemplate.getUIComponent()).enableScreenshotButton();
+            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -143,14 +146,15 @@ public class AppData implements DataComponent {
                     forTextArea.append(line).append("\n");
                 });
         int count = (int) Stream.of(dataString.split("\n")).count();
-        if(count > 10) {
-            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-            PropertyManager manager  = applicationTemplate.manager;
-            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
-            String errMsg = manager.getPropertyValue(AppPropertyTypes.LOADING_10_OF.name());
-            dialog.show(errTitle, errMsg + count);
-        }
+//        if(count > 10) {
+//            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+//            PropertyManager manager  = applicationTemplate.manager;
+//            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+//            String errMsg = manager.getPropertyValue(AppPropertyTypes.LOADING_10_OF.name());
+//            dialog.show(errTitle, errMsg + count);
+//        }
         ((AppUI) applicationTemplate.getUIComponent()).setCurrentText(forTextArea.toString());
+        ((AppUI) applicationTemplate.getUIComponent()).showTextArea(true);
     }
 
     @Override

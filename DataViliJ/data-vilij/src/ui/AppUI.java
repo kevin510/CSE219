@@ -116,15 +116,25 @@ public final class AppUI extends UITemplate {
         GridPane mainPane = new GridPane();
         
         textArea = new TextArea();
+        textArea.setVisible(false);
+        textArea.setDisable(true);
+        //textArea.getStyleClass().add("text-area");
+        textArea.setPrefRowCount(10);
         alg1 = new RadioButton(manager.getPropertyValue(CLASSIFICATION_ALG.name()));
         alg2 = new RadioButton(manager.getPropertyValue(CLUSTERING_ALG.name()));
+        alg1.setVisible(false);
+        alg2.setVisible(false);
         selectAlg = new ToggleGroup();
         selectAlg.getToggles().addAll(alg1, alg2);
         
         instanceCount = new Label();
+        instanceCount.setWrapText(true);
         labelCount = new Label();
+        labelCount.setWrapText(true);
         labelNames = new Label();
+        labelNames.setWrapText(true);
         source = new Label();
+        source.setWrapText(true);
         
         leftPanel.getChildren().addAll(textArea, instanceCount, labelCount, labelNames, source, alg1, alg2);
         
@@ -173,10 +183,11 @@ public final class AppUI extends UITemplate {
     }
     
     public void setLabels(String instanceC, String labelC, String labels, String sourceL) {
-        instanceCount.setText(instanceC);
-        labelCount.setText(labelC);
-        labelNames.setText(labels);
-        source.setText(sourceL);
+        PropertyManager manager = applicationTemplate.manager; 
+        instanceCount.setText(manager.getPropertyValue(INSTANCE_COUNT_LABEL.name()) + instanceC);
+        labelCount.setText(manager.getPropertyValue(LABEL_COUNT_LABEL.name()) + labelC);
+        labelNames.setText(manager.getPropertyValue(LABEL_NAMES_LABEL.name()) + labels);
+        source.setText(manager.getPropertyValue(SOURCE_LABEL.name()) + sourceL);
     }
     
     private void clearChart() {
@@ -188,11 +199,15 @@ public final class AppUI extends UITemplate {
     
     public void setCurrentText(String data) { textArea.setText(data); }
     
-    public void disableSaveButton() {
-        saveButton.setDisable(true);
+    public void disableSaveButton(boolean b) {
+        saveButton.setDisable(b);
     }
     
-    public void enableScreenshotButton() {
-        scrnshotButton.setDisable(false);
+    public void showTextArea(boolean b) {
+        textArea.setVisible(b);
+    }
+    
+    public void disableScreenshotButton(boolean b) {
+        scrnshotButton.setDisable(b);
     }
 }

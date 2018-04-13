@@ -46,6 +46,10 @@ functionality within the main workspace. -->
         <property name="PNG_FILE_EXT_DESC" value="PortableNetworkGraphics"/>
         <property name="CLASSIFICATION_ALG" value="Classification Algorithm"/>
         <property name="CLUSTERING_ALG" value="Clustering Algorithm"/>
+        <property name="INSTANCE_COUNT_LABEL" value="Number of Instances: "/>
+        <property name="LABEL_COUNT_LABEL" value="Number of Labels: "/>
+        <property name="LABEL_NAMES_LABEL" value="Labels: "/>
+        <property name="SOURCE_LABEL" value="Source: "/>
     </property_list>
     <property_options_list/>
 </properties>
