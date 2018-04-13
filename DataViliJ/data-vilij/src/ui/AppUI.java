@@ -9,6 +9,7 @@ import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -21,9 +22,7 @@ import javafx.stage.Stage;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.*;
 import vilij.propertymanager.PropertyManager;
-import static vilij.settings.PropertyTypes.CSS_RESOURCE_PATH;
-import static vilij.settings.PropertyTypes.GUI_RESOURCE_PATH;
-import static vilij.settings.PropertyTypes.ICONS_RESOURCE_PATH;
+import static vilij.settings.PropertyTypes.*;
 import vilij.templates.ApplicationTemplate;
 import vilij.templates.UITemplate;
 
@@ -52,7 +51,8 @@ public final class AppUI extends UITemplate {
     private RadioButton alg1, alg2, alg3;
     private ToggleGroup selectAlg;
     private HBox alg1Layout, alg2Layout, alg3Layout;
-    private Button run;
+    private Button alg1Settings,alg2Settings, alg3Settings, run;
+    private GridPane mainPane;
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -99,9 +99,6 @@ public final class AppUI extends UITemplate {
                 
             }
         });
-
-            
-        
     }
 
     @Override
@@ -122,7 +119,7 @@ public final class AppUI extends UITemplate {
         PropertyManager manager = applicationTemplate.manager;
         
         VBox leftPanel = new VBox();
-        GridPane mainPane = new GridPane();
+        mainPane = new GridPane();
         
         textArea = new TextArea();
         textArea.setVisible(false);
@@ -146,9 +143,15 @@ public final class AppUI extends UITemplate {
         alg1Layout = new HBox();
         alg2Layout = new HBox();
         alg3Layout = new HBox();
-        alg1Layout.getChildren().addAll(alg1, new Button("Settings"));
-        alg2Layout.getChildren().addAll(alg2, new Button("Settings"));
-        alg3Layout.getChildren().addAll(alg3, new Button("Settings"));
+        
+        alg1Settings = new Button("Settings");
+        alg2Settings = new Button("Settings");
+        alg3Settings = new Button("Settings");
+        
+        alg1Layout.getChildren().addAll(alg1, alg1Settings);
+        alg2Layout.getChildren().addAll(alg2, alg2Settings);
+        alg3Layout.getChildren().addAll(alg3, alg3Settings);
+        
         alg1Layout.setVisible(false);
         alg2Layout.setVisible(false);
         alg3Layout.setVisible(false);
@@ -189,6 +192,27 @@ public final class AppUI extends UITemplate {
         appPane.getChildren().add(mainPane);
     }
     
+    private VBox configPane(String title) {
+        VBox configPane = new VBox();
+        Label T = new Label(title);
+        Label maxIt = new Label("Max Iterations: ");
+        TextArea setMaxIt = new TextArea();
+        setMaxIt.setPrefRowCount(1);
+        setMaxIt.setPrefColumnCount(10);
+        Label updateInterval = new Label("Update Interval: ");
+        TextArea setUpdateInterval = new TextArea();
+        setUpdateInterval.setPrefRowCount(1);
+        setUpdateInterval.setPrefColumnCount(10);
+        CheckBox contRun = new CheckBox("Continuous Run?");
+        Button ret = new Button("Return");
+        ret.setOnAction(e -> {
+            appPane.getChildren().remove(configPane);
+            appPane.getChildren().addAll(toolBar, mainPane);
+        });
+        configPane.getChildren().addAll(T, maxIt, setMaxIt, updateInterval, setUpdateInterval, contRun, ret);
+        return configPane;
+    }
+    
     private void setWorkspaceActions() {
         hasNewText = false;
         textArea.textProperty().addListener((final ObservableValue<? extends String> observable, final String oldValue, final String newValue) -> {
@@ -204,6 +228,12 @@ public final class AppUI extends UITemplate {
                     saveButton.setDisable(true);
                 }
             }
+        });
+        
+        alg1Settings.setOnAction(e -> {
+            VBox config = configPane("Algorithm 1");
+            appPane.getChildren().removeAll(toolBar, mainPane);
+            appPane.getChildren().add(config);
         });
         
         selectAlgType.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
