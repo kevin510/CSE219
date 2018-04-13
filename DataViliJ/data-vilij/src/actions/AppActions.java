@@ -75,6 +75,7 @@ public final class AppActions implements ActionComponent {
                 applicationTemplate.getUIComponent().clear();
                 isUnsaved = false;
                 dataFilePath = null;
+                ((AppUI) applicationTemplate.getUIComponent()).initNew();
             }
         } catch (IOException e) { 
             ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);

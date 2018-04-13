@@ -1,6 +1,7 @@
 package ui;
 
 import actions.AppActions;
+import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
 import javafx.beans.value.ObservableValue;
@@ -41,9 +42,10 @@ public final class AppUI extends UITemplate {
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
     private String scrnshotIconPath;
     private String cssPathUI;
-    private RadioButton alg1, alg2;
-    private ToggleGroup selectAlg;
+    private RadioButton algType1, algType2;
+    private ToggleGroup selectAlgType;
     private Label instanceCount, labelCount, labelNames, source;
+    private Button editText;
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -120,12 +122,12 @@ public final class AppUI extends UITemplate {
         textArea.setDisable(true);
         //textArea.getStyleClass().add("text-area");
         textArea.setPrefRowCount(10);
-        alg1 = new RadioButton(manager.getPropertyValue(CLASSIFICATION_ALG.name()));
-        alg2 = new RadioButton(manager.getPropertyValue(CLUSTERING_ALG.name()));
-        alg1.setVisible(false);
-        alg2.setVisible(false);
-        selectAlg = new ToggleGroup();
-        selectAlg.getToggles().addAll(alg1, alg2);
+        algType1 = new RadioButton(manager.getPropertyValue(CLASSIFICATION_ALG.name()));
+        algType2 = new RadioButton(manager.getPropertyValue(CLUSTERING_ALG.name()));
+        algType1.setVisible(false);
+        algType2.setVisible(false);
+        selectAlgType = new ToggleGroup();
+        selectAlgType.getToggles().addAll(algType1, algType2);
         
         instanceCount = new Label();
         instanceCount.setWrapText(true);
@@ -136,7 +138,11 @@ public final class AppUI extends UITemplate {
         source = new Label();
         source.setWrapText(true);
         
-        leftPanel.getChildren().addAll(textArea, instanceCount, labelCount, labelNames, source, alg1, alg2);
+        editText = new Button("Edit");
+        editText.setVisible(false);
+        newButton.setDisable(false);
+        
+        leftPanel.getChildren().addAll(textArea, editText, instanceCount, labelCount, labelNames, source, algType1, algType2);
         
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
@@ -166,7 +172,7 @@ public final class AppUI extends UITemplate {
                     saveButton.setDisable(false);
                 } else {
                     hasNewText = false;
-                    newButton.setDisable(true);
+                    //newButton.setDisable(true);
                     saveButton.setDisable(true);
                 }
             }
@@ -178,6 +184,14 @@ public final class AppUI extends UITemplate {
         
         chart.setOnMouseExited(e -> {
             chart.setCursor(Cursor.DEFAULT);
+        });
+        
+        editText.setOnAction(e -> {
+            if(((AppData) applicationTemplate.getDataComponent()).loadData(textArea.getText())) {
+                textArea.setDisable(!textArea.isDisable());
+                algType1.setVisible(!algType1.isVisible());
+                algType2.setVisible(!algType2.isVisible());
+            }
         });
               
     }
@@ -209,5 +223,11 @@ public final class AppUI extends UITemplate {
     
     public void disableScreenshotButton(boolean b) {
         scrnshotButton.setDisable(b);
+    }
+    
+    public void initNew() {
+        textArea.setVisible(true);
+        textArea.setDisable(false);
+        editText.setVisible(true);
     }
 }

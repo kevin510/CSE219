@@ -28,6 +28,7 @@ public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
     private ApplicationTemplate applicationTemplate;
+    private String dataPath = "Text Area";
 
     public AppData(ApplicationTemplate applicationTemplate) {
         this.processor = new TSDProcessor();
@@ -49,9 +50,7 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(data);
             processor.processString(data);
             loadTextAreaHelper(data);
-            ((AppUI) applicationTemplate.getUIComponent()).setLabels(
-                    Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
-                    processor.getLabels(), dataFilePath.toString());
+            dataPath = dataFilePath.toString();
             loadData(data);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
@@ -73,13 +72,17 @@ public class AppData implements DataComponent {
     }
 }
     
-    public void loadData(String dataString) {
+    public boolean loadData(String dataString) {
         AtomicBoolean hadError = new AtomicBoolean(false);
         try {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
             displayData();
             ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
+            ((AppUI) applicationTemplate.getUIComponent()).setLabels(
+                    Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
+                    processor.getLabels(), dataPath);
+            return true;
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -99,6 +102,7 @@ public class AppData implements DataComponent {
                 hadError.set(true);
                 dialog.show(errTitle, errMsg + errInput);
             }
+            return false;
         }
 
     }
