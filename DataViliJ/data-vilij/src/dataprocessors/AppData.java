@@ -149,7 +149,7 @@ public class AppData implements DataComponent {
                 .forEach((String line) -> {
                     forTextArea.append(line).append("\n");
                 });
-        int count = (int) Stream.of(dataString.split("\n")).count();
+//        int count = (int) Stream.of(dataString.split("\n")).count();
 //        if(count > 10) {
 //            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
 //            PropertyManager manager  = applicationTemplate.manager;

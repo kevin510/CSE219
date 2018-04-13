@@ -12,8 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import settings.AppPropertyTypes;
@@ -46,6 +48,11 @@ public final class AppUI extends UITemplate {
     private ToggleGroup selectAlgType;
     private Label instanceCount, labelCount, labelNames, source;
     private Button editText;
+    private int numLabels;
+    private RadioButton alg1, alg2, alg3;
+    private ToggleGroup selectAlg;
+    private HBox alg1Layout, alg2Layout, alg3Layout;
+    private Button run;
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -129,6 +136,26 @@ public final class AppUI extends UITemplate {
         selectAlgType = new ToggleGroup();
         selectAlgType.getToggles().addAll(algType1, algType2);
         
+        alg1 = new RadioButton("Algorithm 1 ");
+        alg2 = new RadioButton("Algorithm 2 ");
+        alg3 = new RadioButton("Algorithm 3 ");
+        selectAlg = new ToggleGroup();
+        selectAlg.getToggles().addAll(alg1, alg2, alg3);
+        
+        
+        alg1Layout = new HBox();
+        alg2Layout = new HBox();
+        alg3Layout = new HBox();
+        alg1Layout.getChildren().addAll(alg1, new Button("Settings"));
+        alg2Layout.getChildren().addAll(alg2, new Button("Settings"));
+        alg3Layout.getChildren().addAll(alg3, new Button("Settings"));
+        alg1Layout.setVisible(false);
+        alg2Layout.setVisible(false);
+        alg3Layout.setVisible(false);
+        
+        run = new Button("Run");
+        run.setVisible(false);
+        
         instanceCount = new Label();
         instanceCount.setWrapText(true);
         labelCount = new Label();
@@ -142,7 +169,8 @@ public final class AppUI extends UITemplate {
         editText.setVisible(false);
         newButton.setDisable(false);
         
-        leftPanel.getChildren().addAll(textArea, editText, instanceCount, labelCount, labelNames, source, algType1, algType2);
+        leftPanel.getChildren().addAll(textArea, editText, instanceCount, labelCount, labelNames, source, algType1, algType2,
+        alg1Layout, alg2Layout, alg3Layout, run);
         
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
@@ -178,6 +206,20 @@ public final class AppUI extends UITemplate {
             }
         });
         
+        selectAlgType.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            if(selectAlgType.getSelectedToggle() != null) {
+                                showAlgs();
+                            }
+                        });
+        
+        selectAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            if(selectAlg.getSelectedToggle() != null) {
+                                run.setVisible(true);
+                            }
+                        });
+        
         chart.setOnMouseEntered(e -> {
             chart.setCursor(Cursor.HAND);
         });
@@ -187,10 +229,10 @@ public final class AppUI extends UITemplate {
         });
         
         editText.setOnAction(e -> {
+            clearChart();
             if(((AppData) applicationTemplate.getDataComponent()).loadData(textArea.getText())) {
                 textArea.setDisable(!textArea.isDisable());
-                algType1.setVisible(!algType1.isVisible());
-                algType2.setVisible(!algType2.isVisible());
+                showAlgTypes();
             }
         });
               
@@ -198,6 +240,7 @@ public final class AppUI extends UITemplate {
     
     public void setLabels(String instanceC, String labelC, String labels, String sourceL) {
         PropertyManager manager = applicationTemplate.manager; 
+        numLabels = Integer.parseInt(labelC);
         instanceCount.setText(manager.getPropertyValue(INSTANCE_COUNT_LABEL.name()) + instanceC);
         labelCount.setText(manager.getPropertyValue(LABEL_COUNT_LABEL.name()) + labelC);
         labelNames.setText(manager.getPropertyValue(LABEL_NAMES_LABEL.name()) + labels);
@@ -229,5 +272,20 @@ public final class AppUI extends UITemplate {
         textArea.setVisible(true);
         textArea.setDisable(false);
         editText.setVisible(true);
+    }
+    
+    public void showAlgTypes() {
+        algType2.setVisible(true);
+        if(numLabels == 2) {
+            algType1.setVisible(true);
+        } else {
+            algType1.setVisible(false);
+        }
+    }
+    
+    public void showAlgs() {
+        alg1Layout.setVisible(true);
+        alg2Layout.setVisible(true);
+        alg3Layout.setVisible(true);
     }
 }
