@@ -22,9 +22,13 @@ public enum AppPropertyTypes {
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
+    RUN_ICON,
+    SETTINGS_ICON,
 
     /* tooltips for user interface buttons */
     SCREENSHOT_TOOLTIP,
+    RUN_TOOLTIP,
+    SETTINGS_TOOLTIP,
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
@@ -51,5 +55,7 @@ public enum AppPropertyTypes {
     INSTANCE_COUNT_LABEL,
     LABEL_COUNT_LABEL,
     LABEL_NAMES_LABEL,
-    SOURCE_LABEL
+    SOURCE_LABEL,
+    RUN,
+    EDIT;
 }

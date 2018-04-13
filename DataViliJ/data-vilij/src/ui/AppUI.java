@@ -41,7 +41,7 @@ public final class AppUI extends UITemplate {
     private LineChart<Number, Number>    chart;          // the chart where data will be displayed
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
-    private String scrnshotIconPath;
+    private String scrnshotIconPath, runIconPath, settingsIconPath;
     private String cssPathUI;
     private RadioButton algType1, algType2;
     private ToggleGroup selectAlgType;
@@ -69,6 +69,8 @@ public final class AppUI extends UITemplate {
                                              applicationTemplate.manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              applicationTemplate.manager.getPropertyValue(ICONS_RESOURCE_PATH.name()));
         scrnshotIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name()));
+        runIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(RUN_ICON.name()));
+        settingsIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SETTINGS_ICON.name()));
         cssPathUI = "/" + String.join(separator,
                                              manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
@@ -144,9 +146,9 @@ public final class AppUI extends UITemplate {
         alg2Layout = new HBox();
         alg3Layout = new HBox();
         
-        alg1Settings = new Button("Settings");
-        alg2Settings = new Button("Settings");
-        alg3Settings = new Button("Settings");
+        alg1Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
+        alg2Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
+        alg3Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
         
         alg1Layout.getChildren().addAll(alg1, alg1Settings);
         alg2Layout.getChildren().addAll(alg2, alg2Settings);
@@ -156,7 +158,7 @@ public final class AppUI extends UITemplate {
         alg2Layout.setVisible(false);
         alg3Layout.setVisible(false);
         
-        run = new Button("Run");
+        run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), true);
         run.setVisible(false);
         
         instanceCount = new Label();
@@ -168,7 +170,7 @@ public final class AppUI extends UITemplate {
         source = new Label();
         source.setWrapText(true);
         
-        editText = new Button("Edit");
+        editText = new Button(manager.getPropertyValue(EDIT.name()));
         editText.setVisible(false);
         newButton.setDisable(false);
         

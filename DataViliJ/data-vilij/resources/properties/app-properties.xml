@@ -17,9 +17,14 @@ functionality within the main workspace. -->
 
         <!-- USER INTERFACE ICON FILES -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
+        <property name="RUN_ICON" value="play-button.png"/>
+        <property name="SETTINGS_ICON" value="settings.png"/>
 
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="SCREENSHOT_TOOLTIP" value="Screenshot"/> <!-- will print current view of image to a file -->
+        <property name="RUN_TOOLTIP" value="Run"/>
+        <property name="SETTINGS_TOOLTIP" value="Settings"/>
+        
 
         <!-- WARNING MESSAGES -->
         <property name="EXIT_WHILE_RUNNING_WARNING"
@@ -50,6 +55,8 @@ functionality within the main workspace. -->
         <property name="LABEL_COUNT_LABEL" value="Number of Labels: "/>
         <property name="LABEL_NAMES_LABEL" value="Labels: "/>
         <property name="SOURCE_LABEL" value="Source: "/>
+        <property name="RUN" value="Run "/>
+        <property name="EDIT" value="Edit "/>
     </property_list>
     <property_options_list/>
 </properties>

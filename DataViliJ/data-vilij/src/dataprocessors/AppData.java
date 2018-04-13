@@ -82,6 +82,7 @@ public class AppData implements DataComponent {
             ((AppUI) applicationTemplate.getUIComponent()).setLabels(
                     Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
                     processor.getLabels(), dataPath);
+            ((AppUI) applicationTemplate.getUIComponent()).showAlgTypes();
             return true;
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
