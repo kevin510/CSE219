@@ -41,7 +41,7 @@ public final class AppUI extends UITemplate {
     private LineChart<Number, Number>    chart;          // the chart where data will be displayed
     private TextArea                     textArea;       // text area for new data input
     private boolean                      hasNewText;     // whether or not the text area has any new data since last display
-    private String scrnshotIconPath, runIconPath, settingsIconPath;
+    private String scrnshotIconPath, runIconPath, settingsIconPath, editIconPath;
     private String cssPathUI;
     private RadioButton algType1, algType2;
     private ToggleGroup selectAlgType;
@@ -71,6 +71,7 @@ public final class AppUI extends UITemplate {
         scrnshotIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SCREENSHOT_ICON.name()));
         runIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(RUN_ICON.name()));
         settingsIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(SETTINGS_ICON.name()));
+        editIconPath = String.join(separator, iconsPath, applicationTemplate.manager.getPropertyValue(EDIT_ICON.name()));
         cssPathUI = "/" + String.join(separator,
                                              manager.getPropertyValue(GUI_RESOURCE_PATH.name()),
                                              manager.getPropertyValue(CSS_RESOURCE_PATH.name()),
@@ -170,8 +171,9 @@ public final class AppUI extends UITemplate {
         source = new Label();
         source.setWrapText(true);
         
-        editText = new Button(manager.getPropertyValue(EDIT.name()));
+        editText = setToolbarButton(editIconPath, applicationTemplate.manager.getPropertyValue(EDIT_TOOLTIP.name()), false);
         editText.setVisible(false);
+        
         newButton.setDisable(false);
         
         leftPanel.getChildren().addAll(textArea, editText, instanceCount, labelCount, labelNames, source, algType1, algType2,

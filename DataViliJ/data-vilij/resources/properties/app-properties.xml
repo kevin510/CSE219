@@ -19,11 +19,13 @@ functionality within the main workspace. -->
         <property name="SCREENSHOT_ICON" value="screenshot.png"/>
         <property name="RUN_ICON" value="play-button.png"/>
         <property name="SETTINGS_ICON" value="settings.png"/>
+        <property name="EDIT_ICON" value="edit.png"/>
 
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="SCREENSHOT_TOOLTIP" value="Screenshot"/> <!-- will print current view of image to a file -->
         <property name="RUN_TOOLTIP" value="Run"/>
         <property name="SETTINGS_TOOLTIP" value="Settings"/>
+        <property name="EDIT_TOOLTIP" value="Edit"/>
         
 
         <!-- WARNING MESSAGES -->

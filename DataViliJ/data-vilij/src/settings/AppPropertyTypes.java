@@ -24,11 +24,13 @@ public enum AppPropertyTypes {
     SCREENSHOT_ICON,
     RUN_ICON,
     SETTINGS_ICON,
+    EDIT_ICON,
 
     /* tooltips for user interface buttons */
     SCREENSHOT_TOOLTIP,
     RUN_TOOLTIP,
     SETTINGS_TOOLTIP,
+    EDIT_TOOLTIP,
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
