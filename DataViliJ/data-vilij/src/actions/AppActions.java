@@ -110,6 +110,7 @@ public final class AppActions implements ActionComponent {
         }
         try {
             loadHelper();
+            ((AppUI) applicationTemplate.getUIComponent()).initLoad();
         } catch (IOException ex) {
             ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
             PropertyManager manager  = applicationTemplate.manager;

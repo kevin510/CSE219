@@ -57,8 +57,11 @@ functionality within the main workspace. -->
         <property name="LABEL_COUNT_LABEL" value="Number of Labels: "/>
         <property name="LABEL_NAMES_LABEL" value="Labels: "/>
         <property name="SOURCE_LABEL" value="Source: "/>
-        <property name="RUN" value="Run "/>
-        <property name="EDIT" value="Edit "/>
+        <property name="MAX_ITERATIONS_LABEL" value="Max Iterations: "/>
+        <property name="UPDATE_INTERVAL_LABEL" value="Update Interval: "/>
+        <property name="CONTINUOUS_RUN_LABEL" value="Continuous Run? "/>
+        <property name="RETURN_LABEL" value="Return"/>
+
     </property_list>
     <property_options_list/>
 </properties>

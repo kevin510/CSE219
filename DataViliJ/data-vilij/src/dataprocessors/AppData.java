@@ -1,5 +1,6 @@
 package dataprocessors;
 
+import classification.RandomClassifier;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import vilij.settings.PropertyTypes;
 public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
+    private RandomClassifier randomClassifier;
     private ApplicationTemplate applicationTemplate;
     private String dataPath = "Text Area";
 
@@ -77,12 +79,12 @@ public class AppData implements DataComponent {
         try {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
-            displayData();
+            //displayData();
             ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
             ((AppUI) applicationTemplate.getUIComponent()).setLabels(
                     Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
                     processor.getLabels(), dataPath);
-            ((AppUI) applicationTemplate.getUIComponent()).showAlgTypes();
+            
             return true;
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
@@ -169,5 +171,9 @@ public class AppData implements DataComponent {
 
     public void displayData() {
         processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
+    }
+    
+    public void setRandomClassifierSettings(DataSet s, int maxIt, int updateInt, boolean b) {
+        randomClassifier = new RandomClassifier(s, maxIt, updateInt, b);
     }
 }

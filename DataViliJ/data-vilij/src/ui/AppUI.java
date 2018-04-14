@@ -48,8 +48,9 @@ public final class AppUI extends UITemplate {
     private Label instanceCount, labelCount, labelNames, source;
     private Button editText;
     private int numLabels;
-    private RadioButton alg1, alg2, alg3;
-    private ToggleGroup selectAlg;
+    private RadioButton clusteringAlg1, clusteringAlg2, clusteringAlg3;
+    private RadioButton classificationAlg1, classificationAlg2, classificationAlg3;
+    private ToggleGroup selectClassificationAlg, selectClusteringAlg;
     private HBox alg1Layout, alg2Layout, alg3Layout;
     private Button alg1Settings,alg2Settings, alg3Settings, run;
     private GridPane mainPane;
@@ -136,11 +137,17 @@ public final class AppUI extends UITemplate {
         selectAlgType = new ToggleGroup();
         selectAlgType.getToggles().addAll(algType1, algType2);
         
-        alg1 = new RadioButton("Algorithm 1 ");
-        alg2 = new RadioButton("Algorithm 2 ");
-        alg3 = new RadioButton("Algorithm 3 ");
-        selectAlg = new ToggleGroup();
-        selectAlg.getToggles().addAll(alg1, alg2, alg3);
+        classificationAlg1 = new RadioButton("RandomClassifier ");
+        classificationAlg2 = new RadioButton("Classification Algorithm 2 ");
+        classificationAlg3 = new RadioButton("Classification Algorithm 3 ");
+        selectClassificationAlg = new ToggleGroup();
+        selectClassificationAlg.getToggles().addAll(classificationAlg1, classificationAlg2, classificationAlg3);
+        
+        clusteringAlg1 = new RadioButton("Clustering Algorithm 1 ");
+        clusteringAlg2 = new RadioButton("Clustering Algorithm 2 ");
+        clusteringAlg3 = new RadioButton("Clustering Algorithm 3 ");
+        selectClusteringAlg = new ToggleGroup();
+        selectClusteringAlg.getToggles().addAll(clusteringAlg1, clusteringAlg2, clusteringAlg3);
         
         
         alg1Layout = new HBox();
@@ -149,11 +156,7 @@ public final class AppUI extends UITemplate {
         
         alg1Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
         alg2Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
-        alg3Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
-        
-        alg1Layout.getChildren().addAll(alg1, alg1Settings);
-        alg2Layout.getChildren().addAll(alg2, alg2Settings);
-        alg3Layout.getChildren().addAll(alg3, alg3Settings);
+        alg3Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);        
         
         alg1Layout.setVisible(false);
         alg2Layout.setVisible(false);
@@ -197,18 +200,19 @@ public final class AppUI extends UITemplate {
     }
     
     private VBox configPane(String title) {
+        PropertyManager manager = applicationTemplate.manager;
         VBox configPane = new VBox();
         Label T = new Label(title);
-        Label maxIt = new Label("Max Iterations: ");
+        Label maxIt = new Label(manager.getPropertyValue(MAX_ITERATIONS_LABEL.name()));
         TextArea setMaxIt = new TextArea();
         setMaxIt.setPrefRowCount(1);
         setMaxIt.setPrefColumnCount(10);
-        Label updateInterval = new Label("Update Interval: ");
+        Label updateInterval = new Label(manager.getPropertyValue(UPDATE_INTERVAL_LABEL.name()));
         TextArea setUpdateInterval = new TextArea();
         setUpdateInterval.setPrefRowCount(1);
         setUpdateInterval.setPrefColumnCount(10);
-        CheckBox contRun = new CheckBox("Continuous Run?");
-        Button ret = new Button("Return");
+        CheckBox contRun = new CheckBox(manager.getPropertyValue(CONTINUOUS_RUN_LABEL.name()));
+        Button ret = new Button(manager.getPropertyValue(RETURN_LABEL.name()));
         ret.setOnAction(e -> {
             appPane.getChildren().remove(configPane);
             appPane.getChildren().addAll(toolBar, mainPane);
@@ -242,16 +246,21 @@ public final class AppUI extends UITemplate {
         
         selectAlgType.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
                         Toggle oldValue, Toggle newValue) -> {
-                            if(selectAlgType.getSelectedToggle() != null) {
-                                showAlgs();
+                            if(selectAlgType.getSelectedToggle().equals(algType1)) {
+                                showClassificationAlgs();
+                            } else if(selectAlgType.getSelectedToggle().equals(algType2)) {
+                                showClusteringAlgs();
                             }
                         });
         
-        selectAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+        selectClassificationAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
                         Toggle oldValue, Toggle newValue) -> {
-                            if(selectAlg.getSelectedToggle() != null) {
-                                run.setVisible(true);
-                            }
+                            run.setVisible(true);
+                        });
+        
+        selectClusteringAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            run.setVisible(true);
                         });
         
         chart.setOnMouseEntered(e -> {
@@ -281,6 +290,13 @@ public final class AppUI extends UITemplate {
         source.setText(manager.getPropertyValue(SOURCE_LABEL.name()) + sourceL);
     }
     
+    private void clearLabels() {
+        instanceCount.setText("");
+        labelCount.setText("");
+        labelNames.setText("");
+        source.setText("");
+    }
+    
     private void clearChart() {
         chart.getData().remove(0, (int) (chart.getData().size()));
         scrnshotButton.setDisable(true);
@@ -303,21 +319,49 @@ public final class AppUI extends UITemplate {
     }
     
     public void initNew() {
+        clearLabels();
+        algType1.setVisible(false);
+        algType2.setVisible(false);
         textArea.setVisible(true);
         textArea.setDisable(false);
         editText.setVisible(true);
     }
     
-    public void showAlgTypes() {
+    public void initLoad() {
+        textArea.setVisible(true);
+        editText.setVisible(false);
+        textArea.setDisable(true);
+        showAlgTypes();
+    }
+    
+    private void showAlgTypes() {
         algType2.setVisible(true);
-        if(numLabels == 2) {
+        if(numLabels >= 2) {
             algType1.setVisible(true);
         } else {
             algType1.setVisible(false);
         }
     }
     
-    public void showAlgs() {
+    public void showClassificationAlgs() {
+        alg1Layout.getChildren().clear();
+        alg2Layout.getChildren().clear();
+        alg3Layout.getChildren().clear();
+        alg1Layout.getChildren().addAll(classificationAlg1, alg1Settings);
+        alg2Layout.getChildren().addAll(classificationAlg2, alg2Settings);
+        alg3Layout.getChildren().addAll(classificationAlg3, alg3Settings);
+        alg1Layout.setVisible(true);
+        alg2Layout.setVisible(true);
+        alg3Layout.setVisible(true);
+    }
+    
+    public void showClusteringAlgs() {
+        alg1Layout.getChildren().clear();
+        alg2Layout.getChildren().clear();
+        alg3Layout.getChildren().clear();
+        alg1Layout.getChildren().addAll(clusteringAlg1, alg1Settings);
+        alg2Layout.getChildren().addAll(clusteringAlg2, alg2Settings);
+        alg3Layout.getChildren().addAll(clusteringAlg3, alg3Settings);
         alg1Layout.setVisible(true);
         alg2Layout.setVisible(true);
         alg3Layout.setVisible(true);
