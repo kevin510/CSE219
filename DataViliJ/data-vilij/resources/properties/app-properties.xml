@@ -61,6 +61,7 @@ functionality within the main workspace. -->
         <property name="UPDATE_INTERVAL_LABEL" value="Update Interval: "/>
         <property name="CONTINUOUS_RUN_LABEL" value="Continuous Run? "/>
         <property name="RETURN_LABEL" value="Return"/>
+        <property name="CLUSTERING_NUMBER_LABEL" value="Number of Clusters: "/>
 
     </property_list>
     <property_options_list/>

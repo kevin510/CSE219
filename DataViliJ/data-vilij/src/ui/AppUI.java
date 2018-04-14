@@ -54,6 +54,7 @@ public final class AppUI extends UITemplate {
     private HBox alg1Layout, alg2Layout, alg3Layout;
     private Button alg1Settings,alg2Settings, alg3Settings, run;
     private GridPane mainPane;
+    private boolean isClassification;
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -199,7 +200,7 @@ public final class AppUI extends UITemplate {
         appPane.getChildren().add(mainPane);
     }
     
-    private VBox configPane(String title) {
+    private VBox configPane(String title, boolean classification) {
         PropertyManager manager = applicationTemplate.manager;
         VBox configPane = new VBox();
         Label T = new Label(title);
@@ -217,7 +218,15 @@ public final class AppUI extends UITemplate {
             appPane.getChildren().remove(configPane);
             appPane.getChildren().addAll(toolBar, mainPane);
         });
-        configPane.getChildren().addAll(T, maxIt, setMaxIt, updateInterval, setUpdateInterval, contRun, ret);
+        configPane.getChildren().addAll(T, maxIt, setMaxIt, updateInterval, setUpdateInterval, contRun);
+        if(classification == false) {
+            Label numberOfClusters = new Label(manager.getPropertyValue(CLUSTERING_NUMBER_LABEL.name()));
+            TextArea setNumberOfClusters = new TextArea();
+            setNumberOfClusters.setPrefRowCount(1);
+            setNumberOfClusters.setPrefColumnCount(10);
+            configPane.getChildren().addAll(numberOfClusters, setNumberOfClusters);
+        }
+        configPane.getChildren().add(ret);
         return configPane;
     }
     
@@ -232,14 +241,26 @@ public final class AppUI extends UITemplate {
                     saveButton.setDisable(false);
                 } else {
                     hasNewText = false;
-                    //newButton.setDisable(true);
+                    newButton.setDisable(true);
                     saveButton.setDisable(true);
                 }
             }
         });
         
         alg1Settings.setOnAction(e -> {
-            VBox config = configPane("Algorithm 1");
+            VBox config = configPane("Algorithm Configuration", isClassification);
+            appPane.getChildren().removeAll(toolBar, mainPane);
+            appPane.getChildren().add(config);
+        });
+        
+        alg3Settings.setOnAction(e -> {
+            VBox config = configPane("Algorithm Configuration", isClassification);
+            appPane.getChildren().removeAll(toolBar, mainPane);
+            appPane.getChildren().add(config);
+        });
+        
+        alg3Settings.setOnAction(e -> {
+            VBox config = configPane("Algorithm Configuration", isClassification);
             appPane.getChildren().removeAll(toolBar, mainPane);
             appPane.getChildren().add(config);
         });
@@ -248,8 +269,10 @@ public final class AppUI extends UITemplate {
                         Toggle oldValue, Toggle newValue) -> {
                             if(selectAlgType.getSelectedToggle().equals(algType1)) {
                                 showClassificationAlgs();
+                                isClassification = true;
                             } else if(selectAlgType.getSelectedToggle().equals(algType2)) {
                                 showClusteringAlgs();
+                                isClassification = false;
                             }
                         });
         
