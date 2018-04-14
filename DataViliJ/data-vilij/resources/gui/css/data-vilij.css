@@ -32,3 +32,15 @@
 .axis-minor-tick-mark {
     -fx-stroke: black;
 }
+/*.text-area {
+    -fx-border-style: solid;
+}
+
+.text-area .scroll-pane {
+    -fx-vbar-policy: never;
+    -fx-pannable: false;
+}
+
+.text-area .content {
+    -fx-overflow: hidden;
+}*/

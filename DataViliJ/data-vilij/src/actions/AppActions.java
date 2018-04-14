@@ -75,6 +75,7 @@ public final class AppActions implements ActionComponent {
                 applicationTemplate.getUIComponent().clear();
                 isUnsaved = false;
                 dataFilePath = null;
+                ((AppUI) applicationTemplate.getUIComponent()).initNew();
             }
         } catch (IOException e) { 
             ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -109,6 +110,7 @@ public final class AppActions implements ActionComponent {
         }
         try {
             loadHelper();
+            ((AppUI) applicationTemplate.getUIComponent()).initLoad();
         } catch (IOException ex) {
             ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
             PropertyManager manager  = applicationTemplate.manager;
@@ -230,13 +232,13 @@ public final class AppActions implements ActionComponent {
         
     private void save() throws IOException {
         applicationTemplate.getDataComponent().saveData(dataFilePath);
-        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(true);
         isUnsaved = false;
     }
         
     private void load() throws IOException {
         applicationTemplate.getDataComponent().loadData(dataFilePath);
-        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton();
+        ((AppUI) applicationTemplate.getUIComponent()).disableSaveButton(true);
         isUnsaved = false;
     }
 }

@@ -1,5 +1,6 @@
 package dataprocessors;
 
+import classification.RandomClassifier;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,7 +28,9 @@ import vilij.settings.PropertyTypes;
 public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
+    private RandomClassifier randomClassifier;
     private ApplicationTemplate applicationTemplate;
+    private String dataPath = "Text Area";
 
     public AppData(ApplicationTemplate applicationTemplate) {
         this.processor = new TSDProcessor();
@@ -49,6 +52,7 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(data);
             processor.processString(data);
             loadTextAreaHelper(data);
+            dataPath = dataFilePath.toString();
             loadData(data);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
@@ -70,13 +74,18 @@ public class AppData implements DataComponent {
     }
 }
     
-    public void loadData(String dataString) {
+    public boolean loadData(String dataString) {
         AtomicBoolean hadError = new AtomicBoolean(false);
         try {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
-            displayData();
-            ((AppUI) applicationTemplate.getUIComponent()).enableScreenshotButton();
+            //displayData();
+            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
+            ((AppUI) applicationTemplate.getUIComponent()).setLabels(
+                    Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
+                    processor.getLabels(), dataPath);
+            
+            return true;
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -96,6 +105,7 @@ public class AppData implements DataComponent {
                 hadError.set(true);
                 dialog.show(errTitle, errMsg + errInput);
             }
+            return false;
         }
 
     }
@@ -142,15 +152,16 @@ public class AppData implements DataComponent {
                 .forEach((String line) -> {
                     forTextArea.append(line).append("\n");
                 });
-        int count = (int) Stream.of(dataString.split("\n")).count();
-        if(count > 10) {
-            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
-            PropertyManager manager  = applicationTemplate.manager;
-            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
-            String errMsg = manager.getPropertyValue(AppPropertyTypes.LOADING_10_OF.name());
-            dialog.show(errTitle, errMsg + count);
-        }
+//        int count = (int) Stream.of(dataString.split("\n")).count();
+//        if(count > 10) {
+//            ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
+//            PropertyManager manager  = applicationTemplate.manager;
+//            String errTitle = manager.getPropertyValue(PropertyTypes.LOAD_ERROR_TITLE.name());
+//            String errMsg = manager.getPropertyValue(AppPropertyTypes.LOADING_10_OF.name());
+//            dialog.show(errTitle, errMsg + count);
+//        }
         ((AppUI) applicationTemplate.getUIComponent()).setCurrentText(forTextArea.toString());
+        ((AppUI) applicationTemplate.getUIComponent()).showTextArea(true);
     }
 
     @Override
@@ -160,5 +171,9 @@ public class AppData implements DataComponent {
 
     public void displayData() {
         processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
+    }
+    
+    public void setRandomClassifierSettings(DataSet s, int maxIt, int updateInt, boolean b) {
+        randomClassifier = new RandomClassifier(s, maxIt, updateInt, b);
     }
 }

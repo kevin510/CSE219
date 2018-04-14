@@ -173,4 +173,32 @@ public final class TSDProcessor {
         return name;
     }
     
+    public int getNumInstances() {
+        return dataPoints.size();
+    }
+    
+    public int getNumLabels() {
+        LinkedList<String> uniqueLabels = new LinkedList();
+        dataLabels.values().forEach((dat) -> {
+            if(!uniqueLabels.contains(dat)) {
+                uniqueLabels.add(dat);
+            }
+        });
+        return uniqueLabels.size();
+    }
+    
+    public String getLabels() {
+        StringBuilder labels = new StringBuilder();
+        LinkedList<String> uniqueLabels = new LinkedList();
+        dataLabels.values().forEach((dat) -> {
+            if(!uniqueLabels.contains(dat)) {
+                uniqueLabels.add(dat);
+            }
+        });
+        uniqueLabels.forEach((dat) -> {
+            labels.append(dat).append(", ");
+        });
+        return labels.toString();
+    }
+    
 }

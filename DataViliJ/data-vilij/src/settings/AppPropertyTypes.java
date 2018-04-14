@@ -22,9 +22,15 @@ public enum AppPropertyTypes {
 
     /* user interface icon file names */
     SCREENSHOT_ICON,
+    RUN_ICON,
+    SETTINGS_ICON,
+    EDIT_ICON,
 
     /* tooltips for user interface buttons */
     SCREENSHOT_TOOLTIP,
+    RUN_TOOLTIP,
+    SETTINGS_TOOLTIP,
+    EDIT_TOOLTIP,
 
     /* error messages */
     RESOURCE_SUBDIR_NOT_FOUND,
@@ -46,5 +52,15 @@ public enum AppPropertyTypes {
     LOADING_10_OF,
     PNG_FILE_EXT,
     PNG_FILE_EXT_DESC,
-    CHECKBOX_TEXT;
+    CLASSIFICATION_ALG,
+    CLUSTERING_ALG,
+    INSTANCE_COUNT_LABEL,
+    LABEL_COUNT_LABEL,
+    LABEL_NAMES_LABEL,
+    SOURCE_LABEL,
+    MAX_ITERATIONS_LABEL,
+    UPDATE_INTERVAL_LABEL,
+    CONTINUOUS_RUN_LABEL,
+    RETURN_LABEL,
+    CLUSTERING_NUMBER_LABEL
 }
