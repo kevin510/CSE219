@@ -57,7 +57,7 @@ public final class AppUI extends UITemplate {
     private RadioButton classificationAlg1, classificationAlg2, classificationAlg3;
     private ToggleGroup selectClassificationAlg, selectClusteringAlg;
     private HBox alg1Layout, alg2Layout, alg3Layout;
-    private Button algSettings, run;
+    private Button alg1Settings, alg2Settings, alg3Settings, run;
     private GridPane mainPane;
     private boolean isClassification;
     private RandomClassifier random;
@@ -168,8 +168,9 @@ public final class AppUI extends UITemplate {
         alg2Layout = new HBox();
         alg3Layout = new HBox();
         
-        algSettings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
-       
+        alg1Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
+        alg2Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
+        alg3Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
         
         alg1Layout.setVisible(false);
         alg2Layout.setVisible(false);
@@ -241,6 +242,7 @@ public final class AppUI extends UITemplate {
         setNumberOfClusters.setVisible(false);
         if(classification == false) {
             Label numberOfClusters = new Label(manager.getPropertyValue(CLUSTERING_NUMBER_LABEL.name()));
+            setNumberOfClusters.setText(Integer.toString(((ClusteringParameters) P).numberOfClusters()));
             setNumberOfClusters.setVisible(true);
             setNumberOfClusters.setPrefRowCount(1);
             setNumberOfClusters.setPrefColumnCount(10);
@@ -288,7 +290,29 @@ public final class AppUI extends UITemplate {
             }
         });
         
-        algSettings.setOnAction(e -> {
+        alg1Settings.setOnAction(e -> {
+            VBox config;
+            if(isClassification) {
+                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()), isClassification);
+            } else {
+                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()), isClassification) ;
+            }
+            appPane.getChildren().removeAll(toolBar, mainPane);
+            appPane.getChildren().add(config);
+        });
+        
+        alg2Settings.setOnAction(e -> {
+            VBox config;
+            if(isClassification) {
+                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()), isClassification);
+            } else {
+                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()), isClassification) ;
+            }
+            appPane.getChildren().removeAll(toolBar, mainPane);
+            appPane.getChildren().add(config);
+        });
+        
+        alg3Settings.setOnAction(e -> {
             VBox config;
             if(isClassification) {
                 config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()), isClassification);
@@ -404,9 +428,9 @@ public final class AppUI extends UITemplate {
         alg1Layout.getChildren().clear();
         alg2Layout.getChildren().clear();
         alg3Layout.getChildren().clear();
-        alg1Layout.getChildren().addAll(classificationAlg1, algSettings);
-        alg2Layout.getChildren().addAll(classificationAlg2, algSettings);
-        alg3Layout.getChildren().addAll(classificationAlg3, algSettings);
+        alg1Layout.getChildren().addAll(classificationAlg1, alg1Settings);
+        alg2Layout.getChildren().addAll(classificationAlg2, alg2Settings);
+        alg3Layout.getChildren().addAll(classificationAlg3, alg3Settings);
         alg1Layout.setVisible(true);
         alg2Layout.setVisible(true);
         alg3Layout.setVisible(true);
@@ -416,9 +440,9 @@ public final class AppUI extends UITemplate {
         alg1Layout.getChildren().clear();
         alg2Layout.getChildren().clear();
         alg3Layout.getChildren().clear();
-        alg1Layout.getChildren().addAll(clusteringAlg1, algSettings);
-        alg2Layout.getChildren().addAll(clusteringAlg2, algSettings);
-        alg3Layout.getChildren().addAll(clusteringAlg3, algSettings);
+        alg1Layout.getChildren().addAll(clusteringAlg1, alg1Settings);
+        alg2Layout.getChildren().addAll(clusteringAlg2, alg2Settings);
+        alg3Layout.getChildren().addAll(clusteringAlg3, alg3Settings);
         alg1Layout.setVisible(true);
         alg2Layout.setVisible(true);
         alg3Layout.setVisible(true);
