@@ -28,9 +28,9 @@ import vilij.settings.PropertyTypes;
 public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
-    private RandomClassifier randomClassifier;
+    private RandomClassifier    randomClassifier;
     private ApplicationTemplate applicationTemplate;
-    private String dataPath = "Text Area";
+    private String dataPath = "";
 
     public AppData(ApplicationTemplate applicationTemplate) {
         this.processor = new TSDProcessor();
