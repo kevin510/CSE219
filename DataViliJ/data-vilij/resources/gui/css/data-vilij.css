@@ -32,6 +32,10 @@
 .axis-minor-tick-mark {
     -fx-stroke: black;
 }
+
+.app-radio-button {
+    -fx-padding: 4px;
+}
 /*.text-area {
     -fx-border-style: solid;
 }

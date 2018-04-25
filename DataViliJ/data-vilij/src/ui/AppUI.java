@@ -8,11 +8,15 @@ import clustering.ClusteringParameters;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -59,9 +63,10 @@ public final class AppUI extends UITemplate {
     private HBox alg1Layout, alg2Layout, alg3Layout;
     private Button alg1Settings, alg2Settings, alg3Settings, run;
     private GridPane mainPane;
+    private VBox leftPanel;
     private boolean isClassification;
-    private RandomClassifier random;
-    private HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
+    private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
+    private static AtomicInteger globalTimer = new AtomicInteger(0);
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -130,7 +135,7 @@ public final class AppUI extends UITemplate {
         
         PropertyManager manager = applicationTemplate.manager;
         
-        VBox leftPanel = new VBox();
+        leftPanel = new VBox();
         mainPane = new GridPane();
         
         textArea = new TextArea();
@@ -139,17 +144,22 @@ public final class AppUI extends UITemplate {
         //textArea.getStyleClass().add("text-area");
         textArea.setPrefRowCount(10);
         algType1 = new RadioButton(manager.getPropertyValue(CLASSIFICATION_ALG.name()));
+        algType1.getStyleClass().add("app-radio-button");
         algType2 = new RadioButton(manager.getPropertyValue(CLUSTERING_ALG.name()));
+        algType2.getStyleClass().add("app-radio-button");
         algType1.setVisible(false);
         algType2.setVisible(false);
         selectAlgType = new ToggleGroup();
         selectAlgType.getToggles().addAll(algType1, algType2);
         
         classificationAlg1 = new RadioButton("RandomClassifier ");
+        classificationAlg1.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg1, new ClassificationParameters());
         classificationAlg2 = new RadioButton("Classification Algorithm 2 ");
+        classificationAlg2.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg2, new ClassificationParameters());
         classificationAlg3 = new RadioButton("Classification Algorithm 3 ");
+        classificationAlg3.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg3, new ClassificationParameters());
         selectClassificationAlg = new ToggleGroup();
         selectClassificationAlg.getToggles().addAll(classificationAlg1, classificationAlg2, classificationAlg3);
@@ -176,7 +186,7 @@ public final class AppUI extends UITemplate {
         alg2Layout.setVisible(false);
         alg3Layout.setVisible(false);
         
-        run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), true);
+        run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), false);
         run.setVisible(false);
         
         instanceCount = new Label();
@@ -264,6 +274,7 @@ public final class AppUI extends UITemplate {
                 }
                 appPane.getChildren().remove(configPane);
                 appPane.getChildren().addAll(toolBar, mainPane);
+                run.setVisible(true);
             } catch(Exception ex) {
                 
             }
@@ -334,15 +345,47 @@ public final class AppUI extends UITemplate {
                             }
                         });
         
-//        selectClassificationAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
-//                        Toggle oldValue, Toggle newValue) -> {
-//                            run.setVisible(true);
-//                        });
-//        
-//        selectClusteringAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
-//                        Toggle oldValue, Toggle newValue) -> {
-//                            run.setVisible(true);
-//                        });
+        run.setOnAction(e -> {
+            AlgorithmParameters a = algList.get((RadioButton) selectClassificationAlg.getSelectedToggle());
+            RandomClassifier random = new RandomClassifier(
+                ((AppData) applicationTemplate.getDataComponent()).getData(), a.getMaxIterations(),
+                a.getUpdateInterval(), a.isContinuous());
+            Thread thread = new Thread() {
+                @Override
+                public synchronized void run() {
+                    System.out.println("parent thread");
+                    random.run();
+                    List<List<Integer>> allOutput = new ArrayList<>();
+                    Button resume = new Button("continue");
+                    leftPanel.getChildren().add(resume);
+                    resume.setDisable(true);
+                    resume.setOnAction(e -> {
+                        random.notify();
+                        resume.setDisable(true);
+                    });
+                    while(globalTimer.get() <= random.getMaxIterations()) {
+                        List<Integer> output = random.getOutput();
+                        allOutput.add(output);
+                        if(globalTimer.get() % random.getUpdateInterval() == 0) {
+                            // pause algorithm
+                            resume.setDisable(false);
+                            allOutput.forEach((List<Integer> list) -> {
+                                XYChart.Series<Number, Number> line = new XYChart.Series<>();
+                                int a = list.get(0);
+                                int b = list.get(1);
+                                int c = list.get(2);
+                                line.getData().add(new XYChart.Data<>(0, c));
+                                line.getData().add(new XYChart.Data<>(a*10, (-(a*10)-c)/b));
+                                chart.getData().add(line);
+                            });
+                            // update chart
+                            // wait for user prompt to continue
+                        }
+                    }
+                }
+            };
+            thread.start();
+        });
         
         chart.setOnMouseEntered(e -> {
             chart.setCursor(Cursor.HAND);
@@ -381,6 +424,14 @@ public final class AppUI extends UITemplate {
     private void clearChart() {
         chart.getData().remove(0, (int) (chart.getData().size()));
         scrnshotButton.setDisable(true);
+    }
+    
+    public static int getGlobalTimer() {
+        return globalTimer.get();
+    }
+    
+    public static void incrementGlobalTimer() {
+        globalTimer.getAndIncrement();
     }
     
     public String getCurrentText() { return textArea.getText(); }

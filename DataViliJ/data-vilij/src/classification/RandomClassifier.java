@@ -8,6 +8,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static ui.AppUI.getGlobalTimer;
+import static ui.AppUI.incrementGlobalTimer;
 
 /**
  * @author Ritwik Banerjee
@@ -52,15 +56,24 @@ public class RandomClassifier extends Classifier {
     }
 
     @Override
-    public void run() {
-        for (int i = 1; i <= maxIterations && tocontinue(); i++) {
+    public synchronized void run() {
+        for (int i = 1; i <= maxIterations; i++) {
+            if(getGlobalTimer() % updateInterval == 0) {
+                try {
+                    System.out.println("waiting");
+                    wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(RandomClassifier.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            incrementGlobalTimer();
             int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
             int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
             int constant     = new Double(RAND.nextDouble() * 100).intValue();
 
             // this is the real output of the classifier
             output = Arrays.asList(xCoefficient, yCoefficient, constant);
-
+            
             // everything below is just for internal viewing of how the output is changing
             // in the final project, such changes will be dynamically visible in the UI
             if (i % updateInterval == 0) {
