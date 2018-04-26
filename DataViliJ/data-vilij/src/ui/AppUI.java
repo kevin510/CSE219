@@ -8,12 +8,9 @@ import clustering.ClusteringParameters;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
@@ -68,8 +65,8 @@ public final class AppUI extends UITemplate {
     private VBox leftPanel;
     private boolean isClassification;
     private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
-    private static AtomicInteger globalTimer = new AtomicInteger(0);
-    private static AtomicBoolean runInProgress = new AtomicBoolean(false);
+    private static final AtomicInteger globalTimer = new AtomicInteger(0);
+    private static final AtomicBoolean runInProgress = new AtomicBoolean(false);
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -436,13 +433,17 @@ public final class AppUI extends UITemplate {
         source.setText("");
     }
     
-    private void clearChart() {
-        chart.getData().remove(0, (int) (chart.getData().size()));
+    public void clearChart() {
+        chart.getData().clear();
         scrnshotButton.setDisable(true);
     }
     
     public static int getGlobalTimer() {
         return globalTimer.get();
+    }
+    
+    public static void resetGlobalTimer() {
+        globalTimer.set(0);
     }
     
     public static synchronized void incrementGlobalTimer() {

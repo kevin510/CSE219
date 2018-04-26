@@ -53,7 +53,6 @@ public class AppData implements DataComponent {
             processor.processString(data);
             loadTextAreaHelper(data);
             dataSet = fromTSDFile(dataFilePath);
-            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
             ((AppUI) applicationTemplate.getUIComponent()).setLabels(
                     Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
                     processor.getLabels(), dataPath);
@@ -92,7 +91,6 @@ public class AppData implements DataComponent {
                 }
               });
             //displayData();
-            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
             ((AppUI) applicationTemplate.getUIComponent()).setLabels(
                     Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
                     processor.getLabels(), dataPath);
