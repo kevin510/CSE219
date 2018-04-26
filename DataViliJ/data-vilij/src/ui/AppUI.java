@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
@@ -67,6 +69,7 @@ public final class AppUI extends UITemplate {
     private boolean isClassification;
     private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
     private static AtomicInteger globalTimer = new AtomicInteger(0);
+    private static AtomicBoolean runInProgress = new AtomicBoolean(false);
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -218,7 +221,7 @@ public final class AppUI extends UITemplate {
         GridPane.setRowIndex(chart, 0);
         GridPane.setColumnIndex(chart, 1);
         
-        mainPane.getStylesheets().add(cssPathUI);
+        //mainPane.getStylesheets().add(cssPathUI);
         mainPane.getChildren().addAll(leftPanel, chart);
         appPane.getChildren().add(mainPane);
     }
@@ -344,47 +347,59 @@ public final class AppUI extends UITemplate {
                                 isClassification = false;
                             }
                         });
-        
+        final AtomicInteger flag = new AtomicInteger(0);
         run.setOnAction(e -> {
-            AlgorithmParameters a = algList.get((RadioButton) selectClassificationAlg.getSelectedToggle());
-            RandomClassifier random = new RandomClassifier(
-                ((AppData) applicationTemplate.getDataComponent()).getData(), a.getMaxIterations(),
-                a.getUpdateInterval(), a.isContinuous());
-            Thread thread = new Thread() {
-                @Override
-                public synchronized void run() {
-                    System.out.println("parent thread");
-                    random.run();
-                    List<List<Integer>> allOutput = new ArrayList<>();
-                    Button resume = new Button("continue");
-                    leftPanel.getChildren().add(resume);
-                    resume.setDisable(true);
-                    resume.setOnAction(e -> {
-                        random.notify();
-                        resume.setDisable(true);
-                    });
-                    while(globalTimer.get() <= random.getMaxIterations()) {
-                        List<Integer> output = random.getOutput();
-                        allOutput.add(output);
-                        if(globalTimer.get() % random.getUpdateInterval() == 0) {
-                            // pause algorithm
-                            resume.setDisable(false);
-                            allOutput.forEach((List<Integer> list) -> {
-                                XYChart.Series<Number, Number> line = new XYChart.Series<>();
-                                int a = list.get(0);
-                                int b = list.get(1);
-                                int c = list.get(2);
-                                line.getData().add(new XYChart.Data<>(0, c));
-                                line.getData().add(new XYChart.Data<>(a*10, (-(a*10)-c)/b));
-                                chart.getData().add(line);
-                            });
-                            // update chart
-                            // wait for user prompt to continue
-                        }
-                    }
-                }
-            };
-            thread.start();
+            run.setDisable(true);
+            if(flag.get() == 0) {
+                flag.set(1);
+                AlgorithmParameters a = algList.get((RadioButton) selectClassificationAlg.getSelectedToggle());
+                RandomClassifier random = new RandomClassifier(
+                    ((AppData) applicationTemplate.getDataComponent()).getData(), a.getMaxIterations(),
+                    a.getUpdateInterval(), a.isContinuous());
+                random.template = applicationTemplate;
+                Thread alg = new Thread(random);
+                alg.start();
+                runInProgress.set(true);
+            } else {
+                runInProgress.set(true);
+            }
+            
+//            Thread thread = new Thread() {
+//                @Override
+//                public void run() {
+//                    List<List<Integer>> allOutput = new ArrayList<>();
+//                        //random.notify();
+//                    while(globalTimer.get() < random.getMaxIterations()) {
+//                        System.out.println(globalTimer.get());
+//                        List<Integer> output = random.getOutput();
+//                        Platform.runLater(() -> {
+//                            allOutput.add(output);
+//                        });
+//                        if(globalTimer.get() % random.getUpdateInterval() == 0) {
+//                            // pause algorithm
+//                            Platform.runLater(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    allOutput.forEach((List<Integer> list) -> {
+//                                        XYChart.Series<Number, Number> line = new XYChart.Series<>();
+//                                        int a = list.get(0);
+//                                        int b = list.get(1);
+//                                        int c = list.get(2);
+//                                        line.getData().add(new XYChart.Data<>(0, c));
+//                                        line.getData().add(new XYChart.Data<>(a*10, (-(a*10)-c)/b));
+//                                        //addToChart(line);
+//                                    });
+//                                }
+//                            });
+//                            //random.notify();
+//                            // update chart
+//                            // wait for user prompt to continue
+//                        }
+//                    }
+//                    System.out.println("done");
+//                }
+//            };
+            
         });
         
         chart.setOnMouseEntered(e -> {
@@ -430,8 +445,12 @@ public final class AppUI extends UITemplate {
         return globalTimer.get();
     }
     
-    public static void incrementGlobalTimer() {
+    public static synchronized void incrementGlobalTimer() {
         globalTimer.getAndIncrement();
+    }
+    
+    public synchronized void addToChart(XYChart.Series<Number, Number> line) {
+        chart.getData().add(line);
     }
     
     public String getCurrentText() { return textArea.getText(); }
@@ -442,6 +461,14 @@ public final class AppUI extends UITemplate {
         saveButton.setDisable(b);
     }
     
+    public static boolean runInProgress() {
+        return runInProgress.get();
+    }
+    
+    public static void setRunInProgress(boolean b) {
+        runInProgress.set(b);
+    }
+    
     public void showTextArea(boolean b) {
         textArea.setVisible(b);
     }
@@ -449,6 +476,11 @@ public final class AppUI extends UITemplate {
     public void disableScreenshotButton(boolean b) {
         scrnshotButton.setDisable(b);
     }
+    
+    public void disableRunButton(boolean b) {
+        run.setDisable(b);
+    }
+    
     
     public void initNew() {
         clearLabels();

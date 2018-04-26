@@ -8,10 +8,14 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.chart.XYChart;
+import ui.AppUI;
 import static ui.AppUI.getGlobalTimer;
 import static ui.AppUI.incrementGlobalTimer;
+import static ui.AppUI.runInProgress;
+import static ui.AppUI.setRunInProgress;
+import vilij.templates.ApplicationTemplate;
 
 /**
  * @author Ritwik Banerjee
@@ -19,6 +23,7 @@ import static ui.AppUI.incrementGlobalTimer;
 public class RandomClassifier extends Classifier {
 
     private static final Random RAND = new Random();
+    public ApplicationTemplate template;
 
     @SuppressWarnings("FieldCanBeLocal")
     // this mock classifier doesn't actually use the data, but a real classifier will
@@ -56,35 +61,53 @@ public class RandomClassifier extends Classifier {
     }
 
     @Override
-    public synchronized void run() {
-        for (int i = 1; i <= maxIterations; i++) {
-            if(getGlobalTimer() % updateInterval == 0) {
-                try {
-                    System.out.println("waiting");
-                    wait();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(RandomClassifier.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            incrementGlobalTimer();
+    public void run() {
+        
+        AppUI ui = ((AppUI) template.getUIComponent());
+        
+        for (int i = 1; i < maxIterations; i++) {
+            
+            XYChart.Series<Number, Number> line = new XYChart.Series<>();
             int xCoefficient = new Double(RAND.nextDouble() * 100).intValue();
-            int yCoefficient = new Double(RAND.nextDouble() * 100).intValue();
+            int yCoefficient = new Double(RAND.nextDouble() + 1 * 100).intValue();
             int constant     = new Double(RAND.nextDouble() * 100).intValue();
-
-            // this is the real output of the classifier
+            line.getData().add(new XYChart.Data<>(0, constant));
+            line.getData().add(new XYChart.Data<>(xCoefficient*10, (-(xCoefficient*10)-constant)/yCoefficient));
             output = Arrays.asList(xCoefficient, yCoefficient, constant);
             
-            // everything below is just for internal viewing of how the output is changing
-            // in the final project, such changes will be dynamically visible in the UI
-            if (i % updateInterval == 0) {
-                System.out.printf("Iteration number %d: ", i); //
-                flush();
+            if(getGlobalTimer() % updateInterval == 0 && tocontinue() == false) {
+                ui.disableRunButton(false);
+                setRunInProgress(false);
+                Platform.runLater(() -> {
+                    ui.addToChart(line);
+                });
+                while(!runInProgress()) try {
+                    //System.out.println("waiting");
+                    Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        
+                    }
+                ui.disableRunButton(true);
             }
-            if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
-                System.out.printf("Iteration number %d: ", i);
-                flush();
-                break;
-            }
+            incrementGlobalTimer();
+                        
+//            try {
+//                Thread.sleep(1000);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+                // everything below is just for internal viewing of how the output is changing
+                // in the final project, such changes will be dynamically visible in the UI
+//            if (i % updateInterval == 0) {
+//                System.out.printf("Iteration number %d: ", i); //
+//                flush();
+//            }
+//            if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
+//                System.out.printf("Iteration number %d: ", i);
+//                flush();
+//                break;
+//            }
+
         }
     }
 
