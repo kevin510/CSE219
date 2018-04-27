@@ -1,6 +1,6 @@
 package dataprocessors;
 
-import classification.RandomClassifier;
+import static dataprocessors.DataSet.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import vilij.settings.PropertyTypes;
 public class AppData implements DataComponent {
 
     private TSDProcessor        processor;
-    private RandomClassifier    randomClassifier;
+    private DataSet             dataSet;
     private ApplicationTemplate applicationTemplate;
     private String dataPath = "";
 
@@ -52,8 +52,10 @@ public class AppData implements DataComponent {
             processor.dataNameCheck(data);
             processor.processString(data);
             loadTextAreaHelper(data);
-            dataPath = dataFilePath.toString();
-            loadData(data);
+            dataSet = fromTSDFile(dataFilePath);
+            ((AppUI) applicationTemplate.getUIComponent()).setLabels(
+                    Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
+                    processor.getLabels(), dataPath);
         } catch (Exception e) {
             if(e.getMessage().length() > 1) {
                 ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
@@ -79,8 +81,16 @@ public class AppData implements DataComponent {
         try {
             processor.dataNameCheck(dataString);
             processor.processString(dataString);
+            dataSet = new DataSet();
+            Stream.of(dataString.split("\n"))
+                .forEach((String list) -> {
+                try {
+                    dataSet.addInstance(list);
+                } catch (InvalidDataNameException ex) {
+                    
+                }
+              });
             //displayData();
-            ((AppUI) applicationTemplate.getUIComponent()).disableScreenshotButton(false);
             ((AppUI) applicationTemplate.getUIComponent()).setLabels(
                     Integer.toString(processor.getNumInstances()), Integer.toString(processor.getNumLabels()),
                     processor.getLabels(), dataPath);
@@ -173,7 +183,8 @@ public class AppData implements DataComponent {
         processor.toChartData(((AppUI) applicationTemplate.getUIComponent()).getChart());
     }
     
-    public void setRandomClassifierSettings(DataSet s, int maxIt, int updateInt, boolean b) {
-        randomClassifier = new RandomClassifier(s, maxIt, updateInt, b);
+    public DataSet getData() {
+        return dataSet;
     }
+    
 }

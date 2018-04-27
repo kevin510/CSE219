@@ -27,20 +27,22 @@ functionality within the main workspace. -->
         <property name="SETTINGS_TOOLTIP" value="Settings"/>
         <property name="EDIT_TOOLTIP" value="Edit"/>
         
-
-        <!-- WARNING MESSAGES -->
-        <property name="EXIT_WHILE_RUNNING_WARNING"
-                  value="An algorithm is running. If you exit now, all unsaved changes will be lost. Are you sure?"/>
-
+        <!-- WARNING MESSAGES --> 
+        <property name="INVALID_ALGORITHM_PARAMETERS_TITLE" value="Invalid Algorithm Parameters"/>      
+        <property name="INVALID_ALGORITHM_PARAMETERS"
+                  value="Max Iterations and Update Interval must be integers greater than 0!"/>
+        
         <!-- ERROR MESSAGES -->
         <property name="RESOURCE_SUBDIR_NOT_FOUND" value="Directory not found under resources."/>
 
         <!-- APPLICATION-SPECIFIC MESSAGE TITLES -->
         <property name="SAVE_UNSAVED_WORK_TITLE" value="Save Current Work"/>
+        <property name="EXIT_WHILE_RUNNING_TITLE" value="Exit While Running"/>
+        <property name="LOAD_WORK_TITLE" value="LOAD"/>
 
         <!-- APPLICATION-SPECIFIC MESSAGES -->
         <property name="SAVE_UNSAVED_WORK" value="Would you like to save current work?"/>
-        <property name="LOAD_WORK_TITLE" value="LOAD"/>
+        <property name="EXIT_WHILE_RUNNING" value="Algorithm currently in progress. Would you like to exit anyway?"/>
 
         <!-- APPLICATION-SPECIFIC PARAMETERS -->
         <property name="DATA_FILE_EXT" value=".tsd"/>

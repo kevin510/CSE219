@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
@@ -20,6 +22,7 @@ import javax.imageio.ImageIO;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.LOAD_WORK_TITLE;
 import ui.AppUI;
+import static ui.AppUI.runInProgress;
 
 import vilij.components.Dialog;
 import vilij.components.ErrorDialog;
@@ -123,7 +126,25 @@ public final class AppActions implements ActionComponent {
 
     @Override
     public void handleExitRequest() {
-        System.exit(0);
+        boolean q = true;
+        if(isUnsaved) {
+            try {
+                q = promptToSave();
+            } catch (IOException ex) {
+                
+            }
+        }
+        if(runInProgress()) {
+            PropertyManager    manager = applicationTemplate.manager;
+            ConfirmationDialog dialog  = ConfirmationDialog.getDialog();
+            dialog.show(manager.getPropertyValue(AppPropertyTypes.EXIT_WHILE_RUNNING_TITLE.name()),
+            manager.getPropertyValue(AppPropertyTypes.EXIT_WHILE_RUNNING.name()));
+            if (dialog.getSelectedOption().equals(ConfirmationDialog.Option.YES)) System.exit(0);
+            
+        } else {
+            if(q) System.exit(0);
+        }
+        
     }
 
     @Override

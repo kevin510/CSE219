@@ -9,10 +9,13 @@ import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -26,6 +29,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.*;
+import vilij.components.Dialog;
+import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import static vilij.settings.PropertyTypes.*;
 import vilij.templates.ApplicationTemplate;
@@ -59,9 +64,12 @@ public final class AppUI extends UITemplate {
     private HBox alg1Layout, alg2Layout, alg3Layout;
     private Button alg1Settings, alg2Settings, alg3Settings, run;
     private GridPane mainPane;
+    private VBox leftPanel;
     private boolean isClassification;
-    private RandomClassifier random;
-    private HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
+    private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
+    private static final AtomicInteger globalTimer = new AtomicInteger(0);
+    private static final AtomicBoolean runInProgress = new AtomicBoolean(false);
+    private static final AtomicInteger flag = new AtomicInteger(0);
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -130,7 +138,7 @@ public final class AppUI extends UITemplate {
         
         PropertyManager manager = applicationTemplate.manager;
         
-        VBox leftPanel = new VBox();
+        leftPanel = new VBox();
         mainPane = new GridPane();
         
         textArea = new TextArea();
@@ -139,17 +147,22 @@ public final class AppUI extends UITemplate {
         //textArea.getStyleClass().add("text-area");
         textArea.setPrefRowCount(10);
         algType1 = new RadioButton(manager.getPropertyValue(CLASSIFICATION_ALG.name()));
+        algType1.getStyleClass().add("app-radio-button");
         algType2 = new RadioButton(manager.getPropertyValue(CLUSTERING_ALG.name()));
+        algType2.getStyleClass().add("app-radio-button");
         algType1.setVisible(false);
         algType2.setVisible(false);
         selectAlgType = new ToggleGroup();
         selectAlgType.getToggles().addAll(algType1, algType2);
         
         classificationAlg1 = new RadioButton("RandomClassifier ");
+        classificationAlg1.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg1, new ClassificationParameters());
         classificationAlg2 = new RadioButton("Classification Algorithm 2 ");
+        classificationAlg2.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg2, new ClassificationParameters());
         classificationAlg3 = new RadioButton("Classification Algorithm 3 ");
+        classificationAlg3.getStyleClass().add("app-radio-button");
         algList.put(classificationAlg3, new ClassificationParameters());
         selectClassificationAlg = new ToggleGroup();
         selectClassificationAlg.getToggles().addAll(classificationAlg1, classificationAlg2, classificationAlg3);
@@ -176,7 +189,7 @@ public final class AppUI extends UITemplate {
         alg2Layout.setVisible(false);
         alg3Layout.setVisible(false);
         
-        run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), true);
+        run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), false);
         run.setVisible(false);
         
         instanceCount = new Label();
@@ -208,14 +221,14 @@ public final class AppUI extends UITemplate {
         GridPane.setRowIndex(chart, 0);
         GridPane.setColumnIndex(chart, 1);
         
-        mainPane.getStylesheets().add(cssPathUI);
+        //mainPane.getStylesheets().add(cssPathUI);
         mainPane.getChildren().addAll(leftPanel, chart);
         appPane.getChildren().add(mainPane);
     }
     
     private VBox configPane(String title, AlgorithmParameters P, boolean classification) {
         PropertyManager manager = applicationTemplate.manager;
-        
+        ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
         VBox configPane = new VBox();
         Label T = new Label(title);
         
@@ -264,9 +277,12 @@ public final class AppUI extends UITemplate {
                 }
                 appPane.getChildren().remove(configPane);
                 appPane.getChildren().addAll(toolBar, mainPane);
-            } catch(Exception ex) {
-                
+                run.setVisible(true);
+            } catch(NumberFormatException ex) {
+                dialog.show(manager.getPropertyValue((INVALID_ALGORITHM_PARAMETERS_TITLE).name()),
+                            manager.getPropertyValue((INVALID_ALGORITHM_PARAMETERS).name()));
             }
+            
         });
         
         configPane.getChildren().add(ret);
@@ -334,15 +350,33 @@ public final class AppUI extends UITemplate {
                             }
                         });
         
-//        selectClassificationAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
-//                        Toggle oldValue, Toggle newValue) -> {
-//                            run.setVisible(true);
-//                        });
-//        
-//        selectClusteringAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
-//                        Toggle oldValue, Toggle newValue) -> {
-//                            run.setVisible(true);
-//                        });
+        selectClassificationAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            run.setVisible(false);
+                        });
+        
+        selectClusteringAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            run.setVisible(false);
+                        });
+        
+        run.setOnAction(e -> {
+            run.setDisable(true);
+            if(flag.get() == 0) {
+                flag.set(1);
+                AlgorithmParameters a = algList.get((RadioButton) selectClassificationAlg.getSelectedToggle());
+                RandomClassifier random = new RandomClassifier(
+                    ((AppData) applicationTemplate.getDataComponent()).getData(), a.getMaxIterations(),
+                    a.getUpdateInterval(), a.isContinuous());
+                random.template = applicationTemplate;
+                Thread alg = new Thread(random);
+                alg.start();
+                runInProgress.set(true);
+            } else {
+                runInProgress.set(true);
+            }
+            
+        });
         
         chart.setOnMouseEntered(e -> {
             chart.setCursor(Cursor.HAND);
@@ -378,9 +412,25 @@ public final class AppUI extends UITemplate {
         source.setText("");
     }
     
-    private void clearChart() {
-        chart.getData().remove(0, (int) (chart.getData().size()));
+    public void clearChart() {
+        chart.getData().clear();
         scrnshotButton.setDisable(true);
+    }
+    
+    public static int getGlobalTimer() {
+        return globalTimer.get();
+    }
+    
+    public static void resetGlobalTimer() {
+        globalTimer.set(0);
+    }
+    
+    public static synchronized void incrementGlobalTimer() {
+        globalTimer.getAndIncrement();
+    }
+    
+    public synchronized void addToChart(XYChart.Series<Number, Number> line) {
+        chart.getData().add(line);
     }
     
     public String getCurrentText() { return textArea.getText(); }
@@ -391,6 +441,18 @@ public final class AppUI extends UITemplate {
         saveButton.setDisable(b);
     }
     
+    public static boolean runInProgress() {
+        return runInProgress.get();
+    }
+    
+    public static void resetFlag() {
+        flag.set(0);
+    }
+    
+    public static void setRunInProgress(boolean b) {
+        runInProgress.set(b);
+    }
+    
     public void showTextArea(boolean b) {
         textArea.setVisible(b);
     }
@@ -398,6 +460,11 @@ public final class AppUI extends UITemplate {
     public void disableScreenshotButton(boolean b) {
         scrnshotButton.setDisable(b);
     }
+    
+    public void disableRunButton(boolean b) {
+        run.setDisable(b);
+    }
+    
     
     public void initNew() {
         clearLabels();

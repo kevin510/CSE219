@@ -19,8 +19,8 @@ public class ClassificationParameters extends AlgorithmParameters {
     private final boolean runnable;
     
     public ClassificationParameters() {
-        this.maxIterations = 0;
-        this.updateInterval= 0;
+        this.maxIterations = 1;
+        this.updateInterval= 1;
         this.continuous = true;
         this.runnable = false;
     }
