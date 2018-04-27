@@ -350,6 +350,16 @@ public final class AppUI extends UITemplate {
                             }
                         });
         
+        selectClassificationAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            run.setVisible(false);
+                        });
+        
+        selectClusteringAlg.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) -> {
+                            run.setVisible(false);
+                        });
+        
         run.setOnAction(e -> {
             run.setDisable(true);
             if(flag.get() == 0) {
