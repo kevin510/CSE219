@@ -29,6 +29,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import settings.AppPropertyTypes;
 import static settings.AppPropertyTypes.*;
+import vilij.components.Dialog;
+import vilij.components.ErrorDialog;
 import vilij.propertymanager.PropertyManager;
 import static vilij.settings.PropertyTypes.*;
 import vilij.templates.ApplicationTemplate;
@@ -67,6 +69,7 @@ public final class AppUI extends UITemplate {
     private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
     private static final AtomicInteger globalTimer = new AtomicInteger(0);
     private static final AtomicBoolean runInProgress = new AtomicBoolean(false);
+    private static final AtomicInteger flag = new AtomicInteger(0);
     
     public LineChart<Number, Number> getChart() { return chart; }
 
@@ -225,7 +228,7 @@ public final class AppUI extends UITemplate {
     
     private VBox configPane(String title, AlgorithmParameters P, boolean classification) {
         PropertyManager manager = applicationTemplate.manager;
-        
+        ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
         VBox configPane = new VBox();
         Label T = new Label(title);
         
@@ -275,9 +278,11 @@ public final class AppUI extends UITemplate {
                 appPane.getChildren().remove(configPane);
                 appPane.getChildren().addAll(toolBar, mainPane);
                 run.setVisible(true);
-            } catch(Exception ex) {
-                
+            } catch(NumberFormatException ex) {
+                dialog.show(manager.getPropertyValue((INVALID_ALGORITHM_PARAMETERS_TITLE).name()),
+                            manager.getPropertyValue((INVALID_ALGORITHM_PARAMETERS).name()));
             }
+            
         });
         
         configPane.getChildren().add(ret);
@@ -344,7 +349,7 @@ public final class AppUI extends UITemplate {
                                 isClassification = false;
                             }
                         });
-        final AtomicInteger flag = new AtomicInteger(0);
+        
         run.setOnAction(e -> {
             run.setDisable(true);
             if(flag.get() == 0) {
@@ -360,42 +365,6 @@ public final class AppUI extends UITemplate {
             } else {
                 runInProgress.set(true);
             }
-            
-//            Thread thread = new Thread() {
-//                @Override
-//                public void run() {
-//                    List<List<Integer>> allOutput = new ArrayList<>();
-//                        //random.notify();
-//                    while(globalTimer.get() < random.getMaxIterations()) {
-//                        System.out.println(globalTimer.get());
-//                        List<Integer> output = random.getOutput();
-//                        Platform.runLater(() -> {
-//                            allOutput.add(output);
-//                        });
-//                        if(globalTimer.get() % random.getUpdateInterval() == 0) {
-//                            // pause algorithm
-//                            Platform.runLater(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    allOutput.forEach((List<Integer> list) -> {
-//                                        XYChart.Series<Number, Number> line = new XYChart.Series<>();
-//                                        int a = list.get(0);
-//                                        int b = list.get(1);
-//                                        int c = list.get(2);
-//                                        line.getData().add(new XYChart.Data<>(0, c));
-//                                        line.getData().add(new XYChart.Data<>(a*10, (-(a*10)-c)/b));
-//                                        //addToChart(line);
-//                                    });
-//                                }
-//                            });
-//                            //random.notify();
-//                            // update chart
-//                            // wait for user prompt to continue
-//                        }
-//                    }
-//                    System.out.println("done");
-//                }
-//            };
             
         });
         
@@ -464,6 +433,10 @@ public final class AppUI extends UITemplate {
     
     public static boolean runInProgress() {
         return runInProgress.get();
+    }
+    
+    public static void resetFlag() {
+        flag.set(0);
     }
     
     public static void setRunInProgress(boolean b) {

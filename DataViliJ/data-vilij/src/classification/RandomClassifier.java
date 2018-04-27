@@ -15,6 +15,7 @@ import javafx.scene.chart.XYChart;
 import ui.AppUI;
 import static ui.AppUI.getGlobalTimer;
 import static ui.AppUI.incrementGlobalTimer;
+import static ui.AppUI.resetFlag;
 import static ui.AppUI.resetGlobalTimer;
 import static ui.AppUI.runInProgress;
 import static ui.AppUI.setRunInProgress;
@@ -106,12 +107,10 @@ public class RandomClassifier extends Classifier {
                 }
                 Platform.runLater(() -> {
                     ui.disableRunButton(true);
-                });
-                
+                });      
                 
             }
             
-                        
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
@@ -119,10 +118,10 @@ public class RandomClassifier extends Classifier {
             }
                  //everything below is just for internal viewing of how the output is changing
                  //in the final project, such changes will be dynamically visible in the UI
-            if (i % updateInterval == 0) {
-                System.out.printf("Iteration number %d: ", i); //
-                flush();
-            }
+//            if (i % updateInterval == 0) {
+//                System.out.printf("Iteration number %d: ", i); //
+//                flush();
+//            }
 //            if (i > maxIterations * .6 && RAND.nextDouble() < 0.05) {
 //                System.out.printf("Iteration number %d: ", i);
 //                flush();
@@ -132,9 +131,11 @@ public class RandomClassifier extends Classifier {
         }
         Platform.runLater(() -> {
             ui.disableScreenshotButton(false);
+            ui.disableRunButton(false);
         });
         setRunInProgress(false);
         resetGlobalTimer();
+        resetFlag();
     }
 
     // for internal viewing only
