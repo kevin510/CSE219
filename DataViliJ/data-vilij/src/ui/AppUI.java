@@ -5,6 +5,7 @@ import algorithms.AlgorithmParameters;
 import classification.ClassificationParameters;
 import classification.RandomClassifier;
 import clustering.ClusteringParameters;
+import clustering.RandomClusterer;
 import dataprocessors.AppData;
 import static java.io.File.separator;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -212,6 +214,7 @@ public final class AppUI extends UITemplate {
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
         chart = new LineChart(xAxis, yAxis);
+        chart.setLegendVisible(false);
         chart.setHorizontalGridLinesVisible(false);
         chart.setVerticalGridLinesVisible(false);
         chart.setTitle(manager.getPropertyValue(AppPropertyTypes.CHART_TITLE.name()));
@@ -221,7 +224,7 @@ public final class AppUI extends UITemplate {
         GridPane.setRowIndex(chart, 0);
         GridPane.setColumnIndex(chart, 1);
         
-        //mainPane.getStylesheets().add(cssPathUI);
+        mainPane.getStylesheets().add(cssPathUI);
         mainPane.getChildren().addAll(leftPanel, chart);
         appPane.getChildren().add(mainPane);
     }
@@ -364,10 +367,13 @@ public final class AppUI extends UITemplate {
             run.setDisable(true);
             if(flag.get() == 0) {
                 flag.set(1);
-                AlgorithmParameters a = algList.get((RadioButton) selectClassificationAlg.getSelectedToggle());
-                RandomClassifier random = new RandomClassifier(
-                    ((AppData) applicationTemplate.getDataComponent()).getData(), a.getMaxIterations(),
-                    a.getUpdateInterval(), a.isContinuous());
+                AlgorithmParameters a = algList.get((RadioButton) selectClusteringAlg.getSelectedToggle());
+                RandomClusterer random = new RandomClusterer(
+                    ((AppData) applicationTemplate.getDataComponent()).getData(),
+                    a.getMaxIterations(),
+                    a.getUpdateInterval(),
+                    true,
+                    3);
                 random.template = applicationTemplate;
                 Thread alg = new Thread(random);
                 alg.start();
@@ -431,6 +437,11 @@ public final class AppUI extends UITemplate {
     
     public synchronized void addToChart(XYChart.Series<Number, Number> line) {
         chart.getData().add(line);
+    }
+    
+    public void addSeriesToChart(Series s) {
+        chart.getData().add(s);
+        s.getNode().setStyle("-fx-stroke: transparent;");
     }
     
     public String getCurrentText() { return textArea.getText(); }
