@@ -51,6 +51,13 @@ public class RandomClassifier extends Classifier {
     public boolean tocontinue() {
         return tocontinue.get();
     }
+    
+    public RandomClassifier() {
+        this.dataset = new DataSet();
+        this.maxIterations = 1;
+        this.updateInterval = 1;
+        this.tocontinue = new AtomicBoolean(true);
+    }
 
     public RandomClassifier(DataSet dataset,
                             int maxIterations,

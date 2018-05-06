@@ -1,10 +1,9 @@
 package ui;
 
 import actions.AppActions;
-import algorithms.AlgorithmParameters;
-import classification.ClassificationParameters;
+import algorithms.Algorithm;
+import algorithms.Clusterer;
 import classification.RandomClassifier;
-import clustering.ClusteringParameters;
 import clustering.RandomClusterer;
 import dataprocessors.AppData;
 import static java.io.File.separator;
@@ -60,15 +59,15 @@ public final class AppUI extends UITemplate {
     private Label instanceCount, labelCount, labelNames, source;
     private Button editText;
     private int numLabels;
-    private RadioButton clusteringAlg1, clusteringAlg2, clusteringAlg3;
-    private RadioButton classificationAlg1, classificationAlg2, classificationAlg3;
+    private RadioButton clusteringAlg1, clusteringAlg2;
+    private RadioButton classificationAlg1;
     private ToggleGroup selectClassificationAlg, selectClusteringAlg;
-    private HBox alg1Layout, alg2Layout, alg3Layout;
-    private Button alg1Settings, alg2Settings, alg3Settings, run;
+    private HBox alg1Layout, alg2Layout;
+    private Button alg1Settings, alg2Settings, run;
     private GridPane mainPane;
     private VBox leftPanel;
     private boolean isClassification;
-    private final HashMap<RadioButton, AlgorithmParameters> algList = new HashMap<>();
+    private final HashMap<RadioButton, Algorithm> algList = new HashMap<>();
     private static final AtomicInteger globalTimer = new AtomicInteger(0);
     private static final AtomicBoolean runInProgress = new AtomicBoolean(false);
     private static final AtomicInteger flag = new AtomicInteger(0);
@@ -159,37 +158,33 @@ public final class AppUI extends UITemplate {
         
         classificationAlg1 = new RadioButton("RandomClassifier ");
         classificationAlg1.getStyleClass().add("app-radio-button");
-        algList.put(classificationAlg1, new ClassificationParameters());
-        classificationAlg2 = new RadioButton("Classification Algorithm 2 ");
-        classificationAlg2.getStyleClass().add("app-radio-button");
-        algList.put(classificationAlg2, new ClassificationParameters());
-        classificationAlg3 = new RadioButton("Classification Algorithm 3 ");
-        classificationAlg3.getStyleClass().add("app-radio-button");
-        algList.put(classificationAlg3, new ClassificationParameters());
+        algList.put(classificationAlg1, new RandomClassifier());
+//        classificationAlg2 = new RadioButton("Classification Algorithm 2 ");
+//        classificationAlg2.getStyleClass().add("app-radio-button");
+//        algList.put(classificationAlg2, new ClassificationParameters());
+//        classificationAlg3 = new RadioButton("Classification Algorithm 3 ");
+//        classificationAlg3.getStyleClass().add("app-radio-button");
+//        algList.put(classificationAlg3, new ClassificationParameters());
         selectClassificationAlg = new ToggleGroup();
-        selectClassificationAlg.getToggles().addAll(classificationAlg1, classificationAlg2, classificationAlg3);
+        selectClassificationAlg.getToggles().add(classificationAlg1);
         
-        clusteringAlg1 = new RadioButton("Clustering Algorithm 1 ");
-        algList.put(clusteringAlg1, new ClusteringParameters());
-        clusteringAlg2 = new RadioButton("Clustering Algorithm 2 ");
-        algList.put(clusteringAlg2, new ClusteringParameters());
-        clusteringAlg3 = new RadioButton("Clustering Algorithm 3 ");
-        algList.put(clusteringAlg3, new ClusteringParameters());
+        clusteringAlg1 = new RadioButton("Random Clusterer");
+        algList.put(clusteringAlg1, new RandomClusterer());
+        clusteringAlg2 = new RadioButton("K Means Clusterer");
+        algList.put(clusteringAlg2, new RandomClusterer());
+//        clusteringAlg3 = new RadioButton("Clustering Algorithm 3 ");
+//        algList.put(clusteringAlg3, new ClusteringParameters());
         selectClusteringAlg = new ToggleGroup();
-        selectClusteringAlg.getToggles().addAll(clusteringAlg1, clusteringAlg2, clusteringAlg3);
-        
+        selectClusteringAlg.getToggles().addAll(clusteringAlg1, clusteringAlg2);
         
         alg1Layout = new HBox();
         alg2Layout = new HBox();
-        alg3Layout = new HBox();
         
         alg1Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
         alg2Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
-        alg3Settings = setToolbarButton(settingsIconPath, applicationTemplate.manager.getPropertyValue(SETTINGS_TOOLTIP.name()), false);
         
         alg1Layout.setVisible(false);
         alg2Layout.setVisible(false);
-        alg3Layout.setVisible(false);
         
         run = setToolbarButton(runIconPath, applicationTemplate.manager.getPropertyValue(RUN_TOOLTIP.name()), false);
         run.setVisible(false);
@@ -209,7 +204,7 @@ public final class AppUI extends UITemplate {
         newButton.setDisable(false);
         
         leftPanel.getChildren().addAll(textArea, editText, instanceCount, labelCount, labelNames, source, algType1, algType2,
-        alg1Layout, alg2Layout, alg3Layout, run);
+        alg1Layout, alg2Layout, run);
         
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis(); 
@@ -229,7 +224,7 @@ public final class AppUI extends UITemplate {
         appPane.getChildren().add(mainPane);
     }
     
-    private VBox configPane(String title, AlgorithmParameters P, boolean classification) {
+    private VBox configPane(String title, Algorithm A, boolean classification) {
         PropertyManager manager = applicationTemplate.manager;
         ErrorDialog     dialog   = (ErrorDialog) applicationTemplate.getDialog(Dialog.DialogType.ERROR);
         VBox configPane = new VBox();
@@ -237,18 +232,18 @@ public final class AppUI extends UITemplate {
         
         Label maxIt = new Label(manager.getPropertyValue(MAX_ITERATIONS_LABEL.name()));
         TextArea setMaxIt = new TextArea();
-        setMaxIt.setText(Integer.toString(P.getMaxIterations()));
+        setMaxIt.setText(Integer.toString(A.getMaxIterations()));
         setMaxIt.setPrefRowCount(1);
         setMaxIt.setPrefColumnCount(10);
         
         Label updateInterval = new Label(manager.getPropertyValue(UPDATE_INTERVAL_LABEL.name()));
         TextArea setUpdateInterval = new TextArea();
-        setUpdateInterval.setText(Integer.toString(P.getUpdateInterval()));
+        setUpdateInterval.setText(Integer.toString(A.getUpdateInterval()));
         setUpdateInterval.setPrefRowCount(1);
         setUpdateInterval.setPrefColumnCount(10);
         
         CheckBox contRun = new CheckBox(manager.getPropertyValue(CONTINUOUS_RUN_LABEL.name()));
-        contRun.setSelected(P.isContinuous());
+        contRun.setSelected(A.tocontinue());
         
         Button ret = new Button(manager.getPropertyValue(RETURN_LABEL.name()));
         
@@ -258,7 +253,7 @@ public final class AppUI extends UITemplate {
         setNumberOfClusters.setVisible(false);
         if(classification == false) {
             Label numberOfClusters = new Label(manager.getPropertyValue(CLUSTERING_NUMBER_LABEL.name()));
-            setNumberOfClusters.setText(Integer.toString(((ClusteringParameters) P).numberOfClusters()));
+            setNumberOfClusters.setText(Integer.toString(((Clusterer) A).getNumberOfClusters()));
             setNumberOfClusters.setVisible(true);
             setNumberOfClusters.setPrefRowCount(1);
             setNumberOfClusters.setPrefColumnCount(10);
@@ -268,15 +263,26 @@ public final class AppUI extends UITemplate {
         ret.setOnAction(e -> {
             try {
                 if(classification) {
-                    ClassificationParameters Pa = new ClassificationParameters(Integer.parseInt(setMaxIt.getText()),
+                    if(algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()).getClass().equals(RandomClassifier.class)) {
+                        RandomClassifier newAlg = new RandomClassifier(
+                                    ((AppData) applicationTemplate.getDataComponent()).getData(),
+                                    Integer.parseInt(setMaxIt.getText()),
                                     Integer.parseInt(setUpdateInterval.getText()),
                                     contRun.isSelected());
-                    algList.put((RadioButton) selectClassificationAlg.getSelectedToggle(), Pa);
+                        newAlg.template = applicationTemplate;
+                        algList.put((RadioButton) selectClassificationAlg.getSelectedToggle(), newAlg);
+                    }
                 } else {
-                    ClusteringParameters Pb = new ClusteringParameters(Integer.parseInt(setMaxIt.getText()),
+                    if(algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()).getClass().equals(RandomClusterer.class)) {
+                        RandomClusterer newAlg = new RandomClusterer(
+                                    ((AppData) applicationTemplate.getDataComponent()).getData(),
+                                    Integer.parseInt(setMaxIt.getText()),
                                     Integer.parseInt(setUpdateInterval.getText()),
-                                    contRun.isSelected(), Integer.parseInt(setNumberOfClusters.getText()));
-                    algList.put((RadioButton) selectClusteringAlg.getSelectedToggle(), Pb);
+                                    contRun.isSelected(),
+                                    Integer.parseInt(setNumberOfClusters.getText()));
+                        newAlg.template = applicationTemplate;
+                        algList.put((RadioButton) selectClusteringAlg.getSelectedToggle(), newAlg);
+                    }
                 }
                 appPane.getChildren().remove(configPane);
                 appPane.getChildren().addAll(toolBar, mainPane);
@@ -331,17 +337,6 @@ public final class AppUI extends UITemplate {
             appPane.getChildren().add(config);
         });
         
-        alg3Settings.setOnAction(e -> {
-            VBox config;
-            if(isClassification) {
-                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()), isClassification);
-            } else {
-                config = configPane("Algorithm Configuration", algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()), isClassification) ;
-            }
-            appPane.getChildren().removeAll(toolBar, mainPane);
-            appPane.getChildren().add(config);
-        });
-        
         selectAlgType.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> observable,
                         Toggle oldValue, Toggle newValue) -> {
                             if(selectAlgType.getSelectedToggle().equals(algType1)) {
@@ -367,15 +362,12 @@ public final class AppUI extends UITemplate {
             run.setDisable(true);
             if(flag.get() == 0) {
                 flag.set(1);
-                AlgorithmParameters a = algList.get((RadioButton) selectClusteringAlg.getSelectedToggle());
-                RandomClusterer random = new RandomClusterer(
-                    ((AppData) applicationTemplate.getDataComponent()).getData(),
-                    a.getMaxIterations(),
-                    a.getUpdateInterval(),
-                    true,
-                    3);
-                random.template = applicationTemplate;
-                Thread alg = new Thread(random);
+                Thread alg;
+                if(isClassification == true) {
+                    alg = new Thread(algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()));
+                } else {
+                    alg = new Thread(algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()));
+                }
                 alg.start();
                 runInProgress.set(true);
             } else {
@@ -505,24 +497,16 @@ public final class AppUI extends UITemplate {
     public void showClassificationAlgs() {
         alg1Layout.getChildren().clear();
         alg2Layout.getChildren().clear();
-        alg3Layout.getChildren().clear();
         alg1Layout.getChildren().addAll(classificationAlg1, alg1Settings);
-        alg2Layout.getChildren().addAll(classificationAlg2, alg2Settings);
-        alg3Layout.getChildren().addAll(classificationAlg3, alg3Settings);
         alg1Layout.setVisible(true);
-        alg2Layout.setVisible(true);
-        alg3Layout.setVisible(true);
     }
     
     public void showClusteringAlgs() {
         alg1Layout.getChildren().clear();
         alg2Layout.getChildren().clear();
-        alg3Layout.getChildren().clear();
         alg1Layout.getChildren().addAll(clusteringAlg1, alg1Settings);
         alg2Layout.getChildren().addAll(clusteringAlg2, alg2Settings);
-        alg3Layout.getChildren().addAll(clusteringAlg3, alg3Settings);
         alg1Layout.setVisible(true);
         alg2Layout.setVisible(true);
-        alg3Layout.setVisible(true);
     }
 }

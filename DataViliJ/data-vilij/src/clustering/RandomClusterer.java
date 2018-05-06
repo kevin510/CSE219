@@ -42,6 +42,14 @@ public class RandomClusterer extends Clusterer {
 
     private final AtomicBoolean tocontinue;
     
+    public RandomClusterer() {
+        super(0);
+        this.dataset = new DataSet();
+        this.maxIterations = 1;
+        this.updateInterval = 1;
+        this.tocontinue = new AtomicBoolean(true);
+    }
+    
     public RandomClusterer(DataSet dataset,
                            int maxIterations,
                            int updateInterval,
