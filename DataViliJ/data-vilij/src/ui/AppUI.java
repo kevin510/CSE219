@@ -263,6 +263,8 @@ public final class AppUI extends UITemplate {
         
         ret.setOnAction(e -> {
             try {
+                if(Integer.parseInt(setMaxIt.getText()) < 1 || Integer.parseInt(setUpdateInterval.getText()) < 1)
+                    throw new NumberFormatException();
                 if(classification) {
                     if(algList.get((RadioButton) selectClassificationAlg.getSelectedToggle()).getClass().equals(RandomClassifier.class)) {
                         RandomClassifier newAlg = new RandomClassifier(
