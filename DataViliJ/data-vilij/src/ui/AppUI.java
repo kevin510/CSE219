@@ -4,6 +4,7 @@ import actions.AppActions;
 import algorithms.Algorithm;
 import algorithms.Clusterer;
 import classification.RandomClassifier;
+import clustering.KMeansClusterer;
 import clustering.RandomClusterer;
 import dataprocessors.AppData;
 import static java.io.File.separator;
@@ -171,7 +172,7 @@ public final class AppUI extends UITemplate {
         clusteringAlg1 = new RadioButton("Random Clusterer");
         algList.put(clusteringAlg1, new RandomClusterer());
         clusteringAlg2 = new RadioButton("K Means Clusterer");
-        algList.put(clusteringAlg2, new RandomClusterer());
+        algList.put(clusteringAlg2, new KMeansClusterer());
 //        clusteringAlg3 = new RadioButton("Clustering Algorithm 3 ");
 //        algList.put(clusteringAlg3, new ClusteringParameters());
         selectClusteringAlg = new ToggleGroup();
@@ -275,6 +276,15 @@ public final class AppUI extends UITemplate {
                 } else {
                     if(algList.get((RadioButton) selectClusteringAlg.getSelectedToggle()).getClass().equals(RandomClusterer.class)) {
                         RandomClusterer newAlg = new RandomClusterer(
+                                    ((AppData) applicationTemplate.getDataComponent()).getData(),
+                                    Integer.parseInt(setMaxIt.getText()),
+                                    Integer.parseInt(setUpdateInterval.getText()),
+                                    contRun.isSelected(),
+                                    Integer.parseInt(setNumberOfClusters.getText()));
+                        newAlg.template = applicationTemplate;
+                        algList.put((RadioButton) selectClusteringAlg.getSelectedToggle(), newAlg);
+                    } else {
+                        KMeansClusterer newAlg = new KMeansClusterer(
                                     ((AppData) applicationTemplate.getDataComponent()).getData(),
                                     Integer.parseInt(setMaxIt.getText()),
                                     Integer.parseInt(setUpdateInterval.getText()),
