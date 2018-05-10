@@ -157,7 +157,7 @@ public final class AppActions implements ActionComponent {
                 .snapshot(new SnapshotParameters(), null);
         PropertyManager    manager = applicationTemplate.manager;
         FileChooser fileChooser = new FileChooser();
-                String      dataDirPath = separator + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
+                String      dataDirPath = "/" + manager.getPropertyValue(AppPropertyTypes.DATA_RESOURCE_PATH.name());
                 URL         dataDirURL  = getClass().getResource(dataDirPath);
 
                 if (dataDirURL == null)
