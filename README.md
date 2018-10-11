@@ -1,1 +1,1 @@
-CSE 219 DataViliJ is the main project of CSE 219. It demonstrates my understanding of version control, Java 8, JavaFX, and my ability to write technical documents. The other files are short activities done during lab.
+CSE 219 DataViliJ is the main project of CSE 219. It demonstrates my understanding of version control, Java 8, and JavaFX. See hw3_SDD_2 for an example of a technical document that I wrote. The other files are short activities done during lab.
